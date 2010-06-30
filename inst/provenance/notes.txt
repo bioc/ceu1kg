@@ -1,0 +1,4 @@
+
+provenance info for ceu1kg
+
+expression data: ftp://ftp.sanger.ac.uk/pub/genevar/CEU_parents_norm_march2007.zip

@@ -1,0 +1,49 @@
+ex = read.table("CEU_parents_norm_march2007.txt", h=TRUE)
+ex = read.table("CEU_parents_norm_march2007.txt", h=TRUE, nrow=5)
+ex
+dim(ex)
+ex[1:5,1:5]
+ex = read.table("CEU_parents_norm_march2007.txt", h=TRUE)
+dim(ex)
+class(ex)
+exm = data.matrix(ex[,-1])
+rownames(exm) = as.character(ex[,1])
+exm[1:5,1:5]
+class(exm)
+library(GGdata)
+data(hmceuB36)
+sampleNames(hmceuB36)
+pd2 = phenoData(hmceuB36)[, colnames(exm)]
+colnames(exm)
+intersect(colnames(exm), sampleNames(hmceuB36))
+pd2 = phenoData(hmceuB36)[ colnames(exm),]
+pd2
+ex2 = new("ExpressionSet", exprs=exm, phenoData=pd2)
+ex2
+featureNames(ex2)
+dir("../../data")
+load("../../../../data_store/ceu1kg/data/ceu1KG.sml.rda")
+rownames(ceu1KG.sml[[1]])
+rownames(ceu1KG.sml[[1]]) == sampleNames(ex2)
+ex3 = ex2[, rownames(ceu1KG.sml[[1]])
+]
+intersect(rownames(ceu1KG.sml[[1]]), sampleNames(ex2))
+setdiff(rownames(ceu1KG.sml[[1]]), sampleNames(ex2))
+intersect(rownames(ceu1KG.sml[[1]]), sampleNames(ex2))
+ex3 = ex2[, .Last.value]
+ex3
+sl2 = ceu1KG.sml
+sl3 = lapply(sl2, function(x) x[ sampleNames(ex3), ])
+sl3[[1]]
+library(GGtools)
+ceu1kg = make_smlSet( ex3, sl3 )
+args(make_smlSet)
+ceu1kg
+ceu1kg@annotation = "illuminaHumanv1.db"
+ceu1kg
+names(smList(ceu1kg))
+gwSnpTests(genesym("CPNE1")~male, ceu1kg, chrnum("chr20"))
+topSnps(.Last.value)
+gwSnpTests(genesym("CPNE1")~1-1, ceu1kg, chrnum("chr20"))
+topSnps(.Last.value)
+savehistory(file="build.ceu1kg.hist.txt")
