@@ -1,0 +1,66 @@
+
+%
+% NOTE -- ONLY EDIT THE .Rnw FILE!!!  The .tex file is
+% likely to be overwritten.
+%
+
+%\VignetteIndexEntry{ceu1kg overview}
+%\VignetteDepends{GGtools, snpMatrix}
+%\VignetteKeywords{genetics}
+%\VignettePackage{ceu1kg}
+
+\documentclass[12pt]{article}
+
+\usepackage{amsmath,pstricks}
+\usepackage[authoryear,round]{natbib}
+\usepackage{hyperref}
+
+
+\textwidth=6.2in
+\textheight=8.5in
+%\parskip=.3cm
+\oddsidemargin=.1in
+\evensidemargin=.1in
+\headheight=-.3in
+
+\newcommand{\scscst}{\scriptscriptstyle}
+\newcommand{\scst}{\scriptstyle}
+
+
+\newcommand{\Rfunction}[1]{{\texttt{#1}}}
+\newcommand{\Robject}[1]{{\texttt{#1}}}
+\newcommand{\Rpackage}[1]{{\textit{#1}}}
+\newcommand{\Rmethod}[1]{{\texttt{#1}}}
+\newcommand{\Rfunarg}[1]{{\texttt{#1}}}
+\newcommand{\Rclass}[1]{{\textit{#1}}}
+
+\textwidth=6.2in
+
+\bibliographystyle{plainnat} 
+ 
+\begin{document}
+%\setkeys{Gin}{width=0.55\textwidth}
+
+\title{\textit{ceu1kg}: resources for exploring the 1000 genomes data on
+individuals of central European ancestry in Bioconductor}
+\author{VJ Carey}
+\maketitle
+
+\section{Introduction}
+Using results of next generation sequencing experiments,
+a consortium of geneticists produced calls for SNP at approximately 8 million loci of the genomes of individuals of central European ancestry.
+
+Genotype calls are held in a list of snp.matrix instances:
+<<lkd>>=
+library(ceu1kg)
+if (!exists("ceu1KG.sml")) data(ceu1KG.sml)
+names(ceu1KG.sml)
+ceu1KG.sml[[1]]
+@
+Metadata about the loci are provided in GRanges instances:
+<<lkm>>=
+if (!exists("ceu1kgMeta_20")) data(ceu1kgMeta_20)
+ceu1kgMeta_20
+@
+
+\end{document}
