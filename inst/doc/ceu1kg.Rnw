@@ -60,7 +60,7 @@ ceu1KG.sml[[1]]
 Metadata about the loci are provided in GRanges instances:
 <<lkm>>=
 if (!exists("ceu1kgMeta_20")) data(ceu1kgMeta_20)
-ceu1kgMeta_20
+ceu1kgMeta_20[1:3]
 @
 
 \end{document}
