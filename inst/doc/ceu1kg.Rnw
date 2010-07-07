@@ -57,10 +57,28 @@ if (!exists("ceu1KG.sml")) data(ceu1KG.sml)
 names(ceu1KG.sml)
 ceu1KG.sml[[1]]
 @
+
+\clearpage
+
 Metadata about the loci are provided in GRanges instances:
 <<lkm>>=
 if (!exists("ceu1kgMeta_20")) data(ceu1kgMeta_20)
 ceu1kgMeta_20[1:3]
 @
+
+The Bioconductor \textit{GGdata} package includes HapMap phase II genotypes on 90
+CEU individuals in 30 trios, coupled with expression data as distributed
+at the Sanger GENEVAR project (\url{ftp://ftp.sanger.ac.uk/pub/genevar/}).  
+The 1KG genotypes are available for 41 of these 90 and the associated
+genotype plus expression data for these 41 are stored in an `smlSet' container:
+<<lkg>>=
+data(ceu1kg)
+ceu1kg
+@
+
+\section{Imputation of 1KG genotypes to 19 `phase II only' CEU individuals}
+
+
+have been included in the 
 
 \end{document}

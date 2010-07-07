@@ -1,0 +1,267 @@
+
+%
+% NOTE -- ONLY EDIT THE .Rnw FILE!!!  The .tex file is
+% likely to be overwritten.
+%
+
+%\VignetteIndexEntry{}
+%\VignetteDepends{}
+%\VignetteKeywords{}
+%\VignettePackage{}
+
+\documentclass[12pt]{article}
+
+\usepackage{amsmath,pstricks}
+\usepackage[authoryear,round]{natbib}
+\usepackage{hyperref}
+
+
+\textwidth=6.2in
+\textheight=8.5in
+%\parskip=.3cm
+\oddsidemargin=.1in
+\evensidemargin=.1in
+\headheight=-.3in
+
+\newcommand{\scscst}{\scriptscriptstyle}
+\newcommand{\scst}{\scriptstyle}
+
+
+\newcommand{\Rfunction}[1]{{\texttt{#1}}}
+\newcommand{\Robject}[1]{{\texttt{#1}}}
+\newcommand{\Rpackage}[1]{{\textit{#1}}}
+\newcommand{\Rmethod}[1]{{\texttt{#1}}}
+\newcommand{\Rfunarg}[1]{{\texttt{#1}}}
+\newcommand{\Rclass}[1]{{\textit{#1}}}
+
+\textwidth=6.2in
+
+\bibliographystyle{plainnat} 
+ 
+\begin{document}
+%\setkeys{Gin}{width=0.55\textwidth}
+
+\title{Exploring 1000 Genomes with Bioconductor: Dense SNP
+Imputation and Sequence-based Expression Genetics}
+
+\author{VJ Carey, PhD, Channing Laboratory, Harvard Medical School}
+\maketitle
+
+\section{Introduction}
+
+The 1000 genomes (1KG) project aims to develop a ``deep catalog
+of human variation''.  By employing new techniques for determining
+the full sequence of individuals' genomes and publishing
+results at various levels of resolution, the project promises
+significant data resources for use in
+the enrichment of theory and methods of statistical genetics.
+In this paper two applications of resources provided through 1KG
+are discussed in the context of Bioconductor's R-based facilities
+for analysis of genome-scale data.  First, we discuss methods and performance
+of imputation of genotypes from relatively sparse SNP panels to the full
+1KG panels for CEPH populations.  Second, we examine methods for
+analysis of the genetics of gene expression when next-generation sequencing
+is used to characterize both DNA variation and gene expression, the latter
+via the family of methods known as ``RNA-seq''.
+
+\section{SNP imputation to the 1KG panel}
+
+\subsection{Concept and prevalent approaches}
+
+%It is widely accepted that linkage disequilibrium among DNA variants
+%occurs in such a way that ``haplotype blocks'', chromosomal regions
+%that are inherited 
+%%essentially \textit{in toto}, 
+%``without substantial
+%recombination'', may be used to summarize genotypic diversity in
+%human populations \cite{gabriel2002}.  The tendency for clusters
+%of variants to be inherited together makes it feasible to
+%impute unobserved SNP genotypes to individuals who have been
+%sparsely genotyped on the basis of
+%results of dense SNP genotyping on other individuals
+%from the same population.
+
+It is widely accepted that genetic association analyses can be
+enhanced when unobserved genetic markers are suitably imputed
+for individuals who have only been sparsely genotyped 
+\citep{marc2007, serv2007}.  Imputation schemes have been
+systematically compared for use in applications, but no clearly
+dominant method has been identified, using metrics
+related to accuracy for array-based genotypes compared across 
+array versions (e.g., imputation from the Affymetrix genomewide 5.0 SNP
+panel to
+Affymetrix genomewide 6.0 compared to 6.0 calls) or enhancement of power
+for association studies \citep{noth2009}.  The imputation processes
+in wide use (based on MACH, BEAGLE, or IMPUTE software) were found
+in \citet{noth2009} to require at least hundreds of hours of CPU
+time with reasonably modern hardware clusters for problems involving
+imputation of $O(10^6)$ loci on $O(10^3)$ individuals.  Nothnagel et al. do not
+discuss disk space requirements for archiving imputation results, but we
+have found that storage requirements for using MACH for multiple
+populations can be substantial.  For example, a MACH run imputing
+to the 1KG SNP panel for 540 individuals generates over 5 gigabytes
+of text for chromosome 10 alone.  This might be regarded as a reasonable fixed
+cost, with the imputed results serving as a long-term resource. 
+Such a view takes for granted long-term acceptability of both
+the imputation basis data and the
+model used along with settings of its tuning parameters.  Since the
+1KG genotype calls may evolve over time as interpretation of sequencing
+data and methods for calling improve, and understanding of imputation
+model performance may also evolve, it is desirable to develop approaches
+to SNP imputation that are more suited to interactive exploration.
+
+\subsection{Deriving and using SNP imputation rules}
+
+\subsubsection{A concise representation of the CEU 1KG genotypes}
+
+Full 1KG genotype information for 60 individuals from the CEU cohort of the
+CEPH cell line donors is available in the Bioconductor experimental data
+package \textit{ceu1kg}.  The 1-byte representation of allele copy number (or conditional
+expectation thereof) defined in the \textit{snpMatrix} package is used \citep{clayton2007}.
+<<lkd,keep.source=TRUE>>=
+library(ceu1kg)  # load all genotype data
+if (!exists("ceu1KG.sml")) data(ceu1KG.sml)
+names(ceu1KG.sml)   # list of autosomes
+ceu1KG.sml[[1]]     # representation
+object.size(ceu1KG.sml[[1]])
+object.size(colnames(ceu1KG.sml[[1]]))  # bookkeeping cost
+as(ceu1KG.sml[[1]], "matrix")[1:3,1:4]
+sum(sapply(ceu1KG.sml, ncol))  # total SNP count
+@
+We'll be working with data on chromosome 20:
+<<get20>>=
+c1kg_20 = ceu1KG.sml[[20]]
+dim(c1kg_20)
+@
+
+\subsubsection{Regression and phasing for deriving imputation rules}
+
+Four million Phase II HapMap genotypes for 30 CEU trios are available 
+in the Bioconductor \textit{GGdata} package.  We now describe how
+to develop imputation rules for loci which were determined to be
+SNP and were called in 1KG but were not identified as DNA polymorphisms
+or not genotyped in HapMap Phase II.  We will focus on chromosome 20 for
+illustration.
+
+The imputation procedure provided in the \textit{snpMatrix} package
+has a reasonably intuitive interface; statistical details will be
+briefly reviewed below.  Complete genotype data on $N$
+individuals is managed in an $N \times C$ matrix $Z$, where
+$C$ is the complete collection of loci containing all candidates
+for imputation in new cohorts.  The elements of $Z$ are `B' allele
+counts and thus take values 0, 1, 2 (only diallelic SNP are handled);
+a missing indicator is also available for failed genotyping results.
+Columns of $Z$ is partitioned to form matrices $Y$ and $X$.  The columns
+of $X$ correspond to loci that have been genotyped in the cohort for
+which imputation is planned, and the columns of $Y$ correspond to loci that
+are not genotyped in the cohort for which imputation is planned.  Finally,
+chromosomal addresses for all loci in $Y$ and $X$ are
+made available, managed in vectors that
+are denoted $l^Y$ and $l^X$ respectively.  Let $t = 1, \ldots, T$ index the
+columns of $Y$, and $p = 1, \ldots, P$ index the columns of $X$.  
+For a fixed value of $t$ we regard the locus defining the $t$th column
+of $Y$ as the imputation ``target''.
+Rules that use SNPs defining $X$ to predict $Y_t$ are constructed as follows.
+\begin{itemize}
+\item A tuning parameter \texttt{try} is selected by the user to
+specify how many of the SNP in $X$ ``nearest'' to $Y_t$ (using
+chromosomal coordinate distance) will
+be considered as predictors; the default value is 50.
+\item Three regression tuning parameters are specified by the user:
+a minimum acceptable value of $R^2$ to be achieved in stepwise
+\textit{linear} regression for predicting $Y_t$ using the 
+\textit{try} nearest elements of $X$; a maximum number of ``tagging'' SNP
+to be used in the regression model; and a minimum change in $R^2$
+required to support addition of new SNP to the regression model.
+\item Two haplotype modeling tuning parameters are specified by the user:
+a minimum acceptable value of $R^2$ that must be achieved before
+resorting to haplotype modeling, and the proportion by which $(1-R^2)$ must
+fall relative to the value achieved using regression, in order to
+adopt the (slower) haplotype-based imputation rule for $Y_t$.
+\end{itemize}
+
+The details of the regression and haplotype modeling are found in
+\citet{chapman2003}.  Briefly, forward stepwise linear regression is used,
+governed by the tuning parameters noted above, to establish an initial
+predictive model.  If $R^2$ is sufficiently large, the model is adopted.
+Otherwise probabilities of phased haplotypes for the set of predicting and target SNP
+are computed on the basis of an EM algorithm
+and a predictive rule is derived from these.
+
+
+Here we isolate the genotype data for 90 CEU individuals as
+provided in HapMap Phase II.
+<<gethm>>=
+library(GGdata)
+if (!exists("hmceuB36")) data(hmceuB36)
+hm20 = hmceuB36[ chrnum("20"), ]
+hm20
+hm20gt = smList(hm20)[[1]]
+hm20gt
+dim(hm20gt)
+hm20snp = colnames(hm20gt)
+@
+The imputation procedure requires information on SNP locations.
+Such information can be cumbersome to maintain as it is
+dynamic and voluminous.  With Bioconductor, the following
+steps can be used to obtain locations for SNP from HapMap phase II:
+<<getdds>>=
+library(SNPlocs.Hsapiens.dbSNP.20090506)
+l20 = getSNPlocs("chr20")
+l20addr = l20$loc
+l20names = paste("rs", l20$RefSNP_id, sep="")
+names(l20addr) = l20names
+@
+We need to check if there are SNP in the HapMap data that lack locations:
+<<chjk>>=
+unloc = setdiff(hm20snp, l20names)
+length(unloc)
+@
+For now, drop these loci
+<<dropul>>=
+badi = match(unloc, colnames(hm20gt))
+hm20gt = hm20gt[, -badi]
+@
+and subset the full set of addresses accordingly:
+<<dom>>=
+hm20locs = l20addr[hm20snp]
+@
+
+Locations for the 1KG called loci are provided in the \textit{ceu1kg} package:
+<<lkc>>=
+data(ceu1kgMeta_20)
+ceu1kgMeta_20[1:3,]
+@
+We can make a similar location vector for these loci via
+<<getl>>=
+clocs = start(ceu1kgMeta_20)
+names(clocs) = names(ceu1kgMeta_20)
+@
+and check compatibility of addressing:
+<<lkm>>=
+inbo = intersect(names(hm20locs), names(clocs))
+range(hm20locs[inbo] - clocs[inbo])
+@
+
+Now we proceed to imputation.  We first partition the 1KG data into targets and predictors;
+predictors are those available in both the HapMap Phase II and 1KG panels; targets are all other 1KG loci.
+<<gets>>=
+X = c1kg_20[ , intersect(colnames(hm20gt), colnames(c1kg_20))]
+Y = c1kg_20[ , setdiff(colnames(c1kg_20), colnames(X))]
+@
+Now impute with all defaults:
+<<lkdi>>=
+options(digits=3)
+args(snp.imputation)
+unix.time(imp20 <- snp.imputation(X, Y, hm20locs[colnames(X)], clocs[colnames(Y)]))
+imp20[1:5]
+length(imp20)
+object.size(imp20)
+@
+
+
+
+
+\bibliography{jsm2010}
+
+\end{document}
