@@ -257,7 +257,9 @@ unix.time(imp20 <- snp.imputation(X, Y, hm20locs[colnames(X)], clocs[colnames(Y)
 imp20[1:5]
 length(imp20)
 object.size(imp20)
+summary(imp20)
 @
+The summary shows that about 42000 targets could not be imputed
 
 
 
