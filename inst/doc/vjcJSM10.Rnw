@@ -253,11 +253,12 @@ Now impute with all defaults:
 <<lkdi>>=
 options(digits=3)
 args(snp.imputation)
-unix.time(imp20 <- snp.imputation(X, Y, hm20locs[colnames(X)], clocs[colnames(Y)]))
-imp20[1:5]
-length(imp20)
-object.size(imp20)
-summary(imp20)
+unix.time(imphm2_1KG_20 <- snp.imputation(X, Y, hm20locs[colnames(X)], clocs[colnames(Y)]))
+imphm2_1KG_20[1:5]
+length(imphm2_1KG_20)
+object.size(imphm2_1KG_20)
+summary(imphm2_1KG_20)
+save(imphm2_1KG_20, file="imphm2_1KG_20.rda")
 @
 The summary shows that about 42000 targets could not be imputed
 
