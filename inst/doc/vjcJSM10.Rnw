@@ -47,6 +47,8 @@ Imputation and Sequence-based Expression Genetics}
 \author{VJ Carey, PhD, Channing Laboratory, Harvard Medical School}
 \maketitle
 
+\tableofcontents
+
 \section{Introduction}
 
 The 1000 genomes (1KG) project aims to develop a ``deep catalog
@@ -110,6 +112,14 @@ data and methods for calling improve, and understanding of imputation
 model performance may also evolve, it is desirable to develop approaches
 to SNP imputation that are more suited to interactive exploration.
 
+The IDs of samples relevant for these tasks are:
+<<impm>>=
+library(ceu1kg)
+data(C20MLDOSE)
+isamp = colnames(C20MLDOSE)
+length(isamp)
+@
+
 \subsection{Deriving and using SNP imputation rules}
 
 \subsubsection{A concise representation of the CEU 1KG genotypes}
@@ -136,11 +146,11 @@ dim(c1kg_20)
 
 \subsubsection{Regression and phasing for deriving imputation rules}
 
-Four million Phase II HapMap genotypes for 30 CEU trios are available 
-in the Bioconductor \textit{GGdata} package.  We now describe how
+1.2 million Phase III HapMap genotypes for 30 CEU trios are available 
+in the Bioconductor \textit{ceuhm3} package.  We now describe how
 to develop imputation rules for loci which were determined to be
 SNP and were called in 1KG but were not identified as DNA polymorphisms
-or not genotyped in HapMap Phase II.  We will focus on chromosome 20 for
+or not genotyped in HapMap Phase III.  We will focus on chromosome 20 for
 illustration.
 
 The imputation procedure provided in the \textit{snpMatrix} package
@@ -190,21 +200,19 @@ and a predictive rule is derived from these.
 
 
 Here we isolate the genotype data for 90 CEU individuals as
-provided in HapMap Phase II.
+provided in HapMap Phase III.
 <<gethm>>=
-library(GGdata)
-if (!exists("hmceuB36")) data(hmceuB36)
-hm20 = hmceuB36[ chrnum("20"), ]
-hm20
-hm20gt = smList(hm20)[[1]]
-hm20gt
-dim(hm20gt)
-hm20snp = colnames(hm20gt)
+library(ceuhm3)
+if (!exists("ceuhm3.sml")) data(ceuhm3.sml)
+hm3_20gt = ceuhm3.sml[[20]][isamp,]
+hm3_20gt
+dim(hm3_20gt)
+hm3_20snp = colnames(hm3_20gt)
 @
 The imputation procedure requires information on SNP locations.
 Such information can be cumbersome to maintain as it is
 dynamic and voluminous.  With Bioconductor, the following
-steps can be used to obtain locations for SNP from HapMap phase II:
+steps can be used to obtain locations for SNP from HapMap phase III:
 <<getdds>>=
 library(SNPlocs.Hsapiens.dbSNP.20090506)
 l20 = getSNPlocs("chr20")
@@ -214,17 +222,17 @@ names(l20addr) = l20names
 @
 We need to check if there are SNP in the HapMap data that lack locations:
 <<chjk>>=
-unloc = setdiff(hm20snp, l20names)
+unloc = setdiff(hm3_20snp, l20names)
 length(unloc)
 @
 For now, drop these loci
 <<dropul>>=
-badi = match(unloc, colnames(hm20gt))
-hm20gt = hm20gt[, -badi]
+badi = match(unloc, colnames(hm3_20gt))
+hm3_20gt = hm3_20gt[, -badi]
 @
 and subset the full set of addresses accordingly:
 <<dom>>=
-hm20locs = l20addr[hm20snp]
+hm3_20locs = l20addr[hm3_20snp]
 @
 
 Locations for the 1KG called loci are provided in the \textit{ceu1kg} package:
@@ -239,30 +247,61 @@ names(clocs) = names(ceu1kgMeta_20)
 @
 and check compatibility of addressing:
 <<lkm>>=
-inbo = intersect(names(hm20locs), names(clocs))
-range(hm20locs[inbo] - clocs[inbo])
+inbo = intersect(names(hm3_20locs), names(clocs))
+range(hm3_20locs[inbo] - clocs[inbo])
 @
 
 Now we proceed to imputation.  We first partition the 1KG data into targets and predictors;
-predictors are those available in both the HapMap Phase II and 1KG panels; targets are all other 1KG loci.
+predictors are those available in both the HapMap Phase III and 1KG panels; targets are all other 1KG loci.
 <<gets>>=
-X = c1kg_20[ , intersect(colnames(hm20gt), colnames(c1kg_20))]
+X = c1kg_20[ , intersect(colnames(hm3_20gt), colnames(c1kg_20))]
 Y = c1kg_20[ , setdiff(colnames(c1kg_20), colnames(X))]
 @
-Now impute with all defaults:
+Now impute with two different choices of the minA parameter (which determines how much data are available for
+LD estimation):
 <<lkdi>>=
 options(digits=3)
 args(snp.imputation)
-unix.time(imphm2_1KG_20 <- snp.imputation(X, Y, hm20locs[colnames(X)], clocs[colnames(Y)]))
-imphm2_1KG_20[1:5]
-length(imphm2_1KG_20)
-object.size(imphm2_1KG_20)
-summary(imphm2_1KG_20)
-save(imphm2_1KG_20, file="imphm2_1KG_20.rda")
+unix.time(imphm3_1KG_20_mA2 <- snp.imputation(X, Y, hm3_20locs[colnames(X)], clocs[colnames(Y)], minA=2))
+unix.time(imphm3_1KG_20_mA5 <- snp.imputation(X, Y, hm3_20locs[colnames(X)], clocs[colnames(Y)], minA=5))
+imphm3_1KG_20_mA2[1:5]
+imphm3_1KG_20_mA5[1:5]
+length(imphm3_1KG_20_mA2)
+object.size(imphm3_1KG_20_mA2)
+summary(imphm3_1KG_20_mA2)
+save(imphm3_1KG_20_mA2, file="imphm3_1KG_20_mA2.rda")
+save(imphm3_1KG_20_mA5, file="imphm3_1KG_20_mA5.rda")
 @
-The summary shows that about 42000 targets could not be imputed
+The summary shows that about 26000 targets could not be imputed when minA is set to 2, but (summary not
+shown) there are over 47000 loci not
+imputed when minA takes default value 5.  Which choice is better?
 
+\subsection{Comparison to MACH}
 
+Blanca Himes of Channing Laboratory generated 1KG imputed genotypes using MACH.
+The results for chromosome 20 on the hapmap3 calls for CEU are
+<<getbl>>=
+data(C20MLDOSE)
+C20MLDOSE[11:15,1:6]
+@
+This combines the imputed and observed genotype calls.  The imputed ones are:
+<<lk>>=
+C20IMP_MACH = C20MLDOSE[ setdiff(rownames(C20MLDOSE), colnames(hm3_20gt)), ]
+@
+The SNP imputed by snpMatrix regression are
+<<lkreg>>=
+C20IMP_REG = t(impute.snps(imphm3_1KG_20_mA2, hm3_20gt))
+@
+The intersection of imputed loci and samples is
+<<impl>>=
+imploc = intersect(rownames(C20IMP_MACH), rownames(C20IMP_REG))
+comm = intersect(colnames(C20MLDOSE), colnames(C20IMP_REG))
+@
+We now have conformant structures on imputed allele counts:
+<<lki>>=
+C20IMP_MACH = C20IMP_MACH[ imploc, comm ]
+C20IMP_REG = C20IMP_REG[ imploc, comm ]
+@
 
 
 \bibliography{jsm2010}
