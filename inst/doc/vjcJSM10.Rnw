@@ -297,10 +297,62 @@ The intersection of imputed loci and samples is
 imploc = intersect(rownames(C20IMP_MACH), rownames(C20IMP_REG))
 comm = intersect(colnames(C20MLDOSE), colnames(C20IMP_REG))
 @
-We now have conformant structures on imputed allele counts:
+We now have conformant structures on imputed allele counts.  We examine
+correlations for SNP with complete imputations by both methods.
 <<lki>>=
 C20IMP_MACH = C20IMP_MACH[ imploc, comm ]
 C20IMP_REG = C20IMP_REG[ imploc, comm ]
+regRefuse = apply(C20IMP_REG, 1, function(x) all(is.na(x)))
+regCompleteInds = which(apply(C20IMP_REG, 1, function(x) !any(is.na(x))))
+compcor = sapply(regCompleteInds, function(i) cor(C20IMP_MACH[i,], C20IMP_REG[i,]))
+names(compcor) = rownames(C20IMP_REG)[regCompleteInds]
+@
+We look at absolute value of correlation because we have no guarantees
+that alleles are identically labeled for the two approaches.
+<<mm>>=
+summary(abs(compcor))
+@
+Here are 9 examples of the correspondence:
+<<lkp, fig=TRUE>>=
+par(mfrow=c(3,3))
+jj = function(x) jitter(x, a=.1)
+for (i in 1:9)
+  plot(jj(C20IMP_MACH[i,]), jj(C20IMP_REG[i,]), xlab="mach", ylab="regr",
+    main=rownames(C20IMP_MACH)[i], xlim=c(-.2,2.2), ylim=c(-.2,2.2))
+@
+<<lkp2, fig=TRUE>>=
+par(mfrow=c(3,3))
+for (i in 10:18)
+  plot(jj(C20IMP_MACH[i,]), jj(C20IMP_REG[i,]), xlab="mach", ylab="regr",
+    main=rownames(C20IMP_MACH)[i], xlim=c(-.2,2.2), ylim=c(-.2,2.2))
+@
+
+Concordance is common but far from universal.
+It would be interesting to have a metric
+on imputation effectiveness.  MACH and snpMatrix developers
+have looked at fake imputation on known loci that were
+artificially held back.  No succinct measure of effectiveness
+seems forthcoming.  MACH has a "QC" measure, and snpMatrix
+has the $R^2$ associated with each regression rule.
+
+The effect of a one-allele transfer on 'best eQTL' for
+a given gene can be
+computed and may serve as a measure of sensitivity of
+an eQTL inference to improvement by imputation.
+
+\section{Imputation: effects on eQTL discovery}
+
+We have expression data from hapmap 3 cell lines.
+<<gethm3>>=
+library(ceuhm3)
+data(hm3ceuSMS)
+ex3 = exprs(hm3ceuSMS)[, intersect(colnames(C20IMP_MACH), 
+        sampleNames(hm3ceuSMS))]
+mach20 = C20IMP_MACH[, colnames(ex3)]
+pv = function(...) summary(lm(...))$coef[2,4]
+pv(ex3[1,]~mach20[1,])
+library(multicore)
+g1 = unlist(mclapply(1:500, function(x) pv(ex3[1,]~mach20[x,])))
 @
 
 
