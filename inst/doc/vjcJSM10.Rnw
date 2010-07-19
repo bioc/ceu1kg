@@ -342,7 +342,11 @@ an eQTL inference to improvement by imputation.
 
 \section{Imputation: effects on eQTL discovery}
 
+\subsection{A quick example}
+
 We have expression data from hapmap 3 cell lines.
+In the following we will check a single gene for any eQTL by
+testing for every SNP, measured or imputed, on chr20, using lm (so a slow solution).
 <<gethm3>>=
 library(ceuhm3)
 data(hm3ceuSMS)
@@ -355,10 +359,82 @@ pv = function(...) { ttmp = try(lm(...));
            tmp = summary(ttmp)$coef; if (nrow(tmp) !=2) return(NA); return(tmp[2,4]) }
 pv(ex3[1,]~mach20[1,])
 library(multicore)
-g1 = unlist(mclapply(1:500, function(x) {if (x%%100 == 0) cat(x);pv(ex3[1,]~mach20[x,])}))
-g2 = unlist(mclapply(1:500, function(x) {if (x%%100 == 0) cat(x);pv(ex3[1,]~reg20[x,])}))
+<<doruns,results=hide>>=
+try(load("rung1.rda"))
+if (!exists("rung1"))
+rung1 = unlist(mclapply(1:nrow(mach20), function(x) {if (x%%100 == 0) cat(x);pv(ex3[1,]~mach20[x,])}))
+save(rung1, file="rung1.rda")
+try(load("rung2.rda"))
+if (!exists("rung2"))
+rung2 = unlist(mclapply(1:nrow(reg20), function(x) {if (x%%100 == 0) cat(x);pv(ex3[1,]~reg20[x,])}))
+save(rung2, file="rung2.rda")
+names(rung1) = rownames(mach20)
+names(rung2) = rownames(reg20)
+<<chkruns>>=
+s1 = sort(rung1)[1:20]
+s1
+s2 = sort(rung2)[1:20]
+s2
+@
+We see that there is a better result among the mach-imputed SNP, though it might not be considered
+genome-wide significant.  We will get into significance later.
+We plot the calls on the best mach-imputed snp in panel (a) below.  In panels (b) and (c) we show expression
+values for the gene used against the two call sets.  We see that mach calls a single homozygote with
+low expression, yielding a sharper slope of mean expression against allele count.
+<<doplaa,fig=TRUE>>=
+par(mfrow=c(2,2))
+best = names(s1)[1]
+plot( jj(mach20[ best, ]), jj(reg20[best, ]), xlab = "mach", ylab="regression", main=paste("(a)", best))
+plot (ex3[1,]~jj(mach20[best,]), xlab=best, ylab="expr", main="(b): mach")
+plot (ex3[1,]~jj(reg20[best,]), xlab=best, ylab="expr", main="(c): regr")
+plot (C20MLQC[best,colnames(mach20)]~jj(mach20[best,]), xlab=best, ylab="mach MLQC", main="(d): mach")
+@
+It is not clear how to form a preference for one approach to imputing genotypes at this locus.  Here
+is the model chosen by snpMatrix:
+<<lkrul>>=
+imphm3_1KG_20_mA2[best]
 @
 
+\subsection{A screen of cis relationships on chromosome 20}
+
+We have a high performance approach to surveying all genes vs all SNP on chromosome 20, with
+regression imputation.
+<<doi>>=
+h20 = hm3ceuSMS[ chrnum("chr20"), ]
+library(illuminaHumanv1.db)
+g20 = get("20", revmap(illuminaHumanv1CHR))
+h20 = h20[ probeId(g20), ]
+if (!exists("ieq20")) {
+ if (!file.exists("ieq20.rda"))
+   ieq20 = ieqtlTests( h20, ~male, runname="iq20", targdir="iq20", rules= imphm3_1KG_20_mA2, geneApply=mclapply )
+ else load("ieq20.rda")
+ }
+ieq20
+@
+We will now obtain the best 10 SNP for each gene:
+<<gettop>>=
+if (!exists("s20tops"))
+s20topsL = lapply(g20, function(x) topFeats(probeid=x, mgr=ieq20, ffind=1, anno="illuminaHumanv1.db", useSym=FALSE))
+s20tops = sapply(s20topsL, "[", 1)
+topsnp20 = names(s20tops)
+tope20df = data.frame(snpid=topsnp20, score=s20tops, gene=g20)
+@
+and look at the genes that show strong association with some SNP.
+<<lkd>>=
+tops = tope20df[order(tope20df$score, decreasing=TRUE),][1:10,]
+bestg = as.character(tops[1, "gene"])
+get(bestg, illuminaHumanv1SYMBOL)
+@
+Does imputation with MACH lead to different identifications of eQTL for these genes?
+Here's the first one
+<<domac>>=
+unix.time(runb1 <- unlist(mclapply(1:nrow(mach20), function(x) {if (x%%1000 == 0) cat(x);pv(ex3[bestg,]~mach20[x,])})))
+names(runb1) = rownames(mach20)
+sort(runb1)[1:5]
+@
+
+
+@
 
 \bibliography{jsm2010}
 
