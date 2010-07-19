@@ -349,10 +349,14 @@ data(hm3ceuSMS)
 ex3 = exprs(hm3ceuSMS)[, intersect(colnames(C20IMP_MACH), 
         sampleNames(hm3ceuSMS))]
 mach20 = C20IMP_MACH[, colnames(ex3)]
-pv = function(...) summary(lm(...))$coef[2,4]
+reg20 = C20IMP_REG[, colnames(ex3)]
+pv = function(...) { ttmp = try(lm(...)); 
+           if(inherits(ttmp, "try-error")) return(NA); 
+           tmp = summary(ttmp)$coef; if (nrow(tmp) !=2) return(NA); return(tmp[2,4]) }
 pv(ex3[1,]~mach20[1,])
 library(multicore)
-g1 = unlist(mclapply(1:500, function(x) pv(ex3[1,]~mach20[x,])))
+g1 = unlist(mclapply(1:500, function(x) {if (x%%100 == 0) cat(x);pv(ex3[1,]~mach20[x,])}))
+g2 = unlist(mclapply(1:500, function(x) {if (x%%100 == 0) cat(x);pv(ex3[1,]~reg20[x,])}))
 @
 
 
