@@ -199,7 +199,7 @@ are computed on the basis of an EM algorithm
 and a predictive rule is derived from these.
 
 
-Here we isolate the genotype data for 90 CEU individuals as
+Here we isolate the genotype data for 110 CEU individuals as
 provided in HapMap Phase III.
 <<gethm>>=
 library(ceuhm3)
@@ -251,13 +251,13 @@ inbo = intersect(names(hm3_20locs), names(clocs))
 range(hm3_20locs[inbo] - clocs[inbo])
 @
 
-Now we proceed to imputation.  We first partition the 1KG data into targets and predictors;
+Now we proceed to imputation.  We first partition the 1KG data into targets \texttt{Y} and predictors \texttt{X};
 predictors are those available in both the HapMap Phase III and 1KG panels; targets are all other 1KG loci.
 <<gets>>=
 X = c1kg_20[ , intersect(colnames(hm3_20gt), colnames(c1kg_20))]
 Y = c1kg_20[ , setdiff(colnames(c1kg_20), colnames(X))]
 @
-Now impute with two different choices of the minA parameter (which determines how much data are available for
+Now impute with two different choices of the \texttt{minA} parameter (which determines how much data are available for
 LD estimation):
 <<lkdi>>=
 options(digits=3)
@@ -286,6 +286,7 @@ C20MLDOSE[11:15,1:6]
 @
 This combines the imputed and observed genotype calls.  The imputed ones are:
 <<lk>>=
+C20_MACH_FULL = C20MLDOSE
 C20IMP_MACH = C20MLDOSE[ setdiff(rownames(C20MLDOSE), colnames(hm3_20gt)), ]
 @
 The SNP imputed by snpMatrix regression are
@@ -327,25 +328,26 @@ for (i in 10:18)
     main=rownames(C20IMP_MACH)[i], xlim=c(-.2,2.2), ylim=c(-.2,2.2))
 @
 
-Concordance is common but far from universal.
+There is some concordance and some discordance.
 It would be interesting to have a metric
 on imputation effectiveness.  MACH and snpMatrix developers
-have looked at fake imputation on known loci that were
-artificially held back.  No succinct measure of effectiveness
+have looked at imputation on known loci that were
+artificially held back and did not discover major
+shortcomings of their methods.  No succinct measure of effectiveness
 seems forthcoming.  MACH has a "QC" measure, and snpMatrix
 has the $R^2$ associated with each regression rule.
 
-The effect of a one-allele transfer on 'best eQTL' for
-a given gene can be
-computed and may serve as a measure of sensitivity of
-an eQTL inference to improvement by imputation.
+%The effect of a one-allele transfer on 'best eQTL' for
+%a given gene can be
+%computed and may serve as a measure of sensitivity of
+%an eQTL inference to improvement by imputation.
 
 \section{Imputation: effects on eQTL discovery}
 
 \subsection{A quick example}
 
-We have expression data from hapmap 3 cell lines.
-In the following we will check a single gene for any eQTL by
+We have expression data from HapMap phase III cell lines.
+In the following we will check a single arbitrarily chosen gene for any eQTL by
 testing for every SNP, measured or imputed, on chr20, using lm (so a slow solution).
 We do not require conformity of the SNP sets -- the best fit for one imputation method might
 involve a SNP unavailable in the other.  Samples are restricted primarily by availability
@@ -382,8 +384,11 @@ s2
 We see that there is a better result among the mach-imputed SNP, though it might not be considered
 genome-wide significant.  We will get into significance later.
 We plot the calls on the best mach-imputed snp in panel (a) below.  In panels (b) and (c) we show expression
-values for the gene used against the two call sets.  We see that mach calls a single homozygote with
-low expression, yielding a sharper slope of mean expression against allele count.
+values for the gene used against the SNP identified as most predictive by eQTL analysis based on
+MACH imputations and regression imputation respectively.
+The best identified SNP for MACH isolates an A/A with relatively low expression; the best identified
+SNP with regression isolates an A/A with relatively high expression.  The findings are almost
+certainly false positives, but they indicate some of the complexity of interpretation that can crop up.
 <<doplaa,fig=TRUE>>=
 par(mfrow=c(2,2))
 besti = intersect(names(s1), names(s2))[1]
@@ -406,6 +411,7 @@ imphm3_1KG_20_mA2[bestr]
 We have a high performance approach to surveying all genes vs all SNP on chromosome 20, with
 regression imputation.
 <<doi>>=
+library(GGtools)
 h20 = hm3ceuSMS[ chrnum("chr20"), ]
 library(illuminaHumanv1.db)
 g20 = get("20", revmap(illuminaHumanv1CHR))
@@ -431,7 +437,8 @@ and look at the genes that show strong association with some SNP.
 tops = tope20df[order(tope20df$score, decreasing=TRUE),][1:10,]
 tops
 bestg = as.character(tops[1, "gene"])
-get(bestg, illuminaHumanv1SYMBOL)
+theg = get(bestg, illuminaHumanv1SYMBOL)
+theg
 @
 Does imputation with MACH lead to different identifications of eQTL for these genes?
 Here's the first one
@@ -443,11 +450,16 @@ unix.time(runb1 <- unlist(mclapply(1:nrow(C20MLDOSE), function(x) {
 names(runb1) = rownames(C20MLDOSE)
 save(runb1, file="runb1.rda")
 }
-sort(runb1)[1:5]
 @
-
-
+The top 10 SNP for predicting \Sexpr{theg} using MACH imputation are
+<<lkmomo>>=
+sort(runb1)[1:10]
 @
+those based on regression imputation are
+<<lkmmaa>>-
+sort(s20topsL[[bestg]],decreasing=TRUE)[1:10]
+@
+We need location data to get a sense of context.
 
 \bibliography{jsm2010}
 
