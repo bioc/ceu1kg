@@ -342,7 +342,7 @@ has the $R^2$ associated with each regression rule.
 %computed and may serve as a measure of sensitivity of
 %an eQTL inference to improvement by imputation.
 
-\section{Imputation: effects on eQTL discovery}
+\section{Imputation: effects of different methods on eQTL discovery}
 
 \subsection{A quick example}
 
@@ -408,6 +408,8 @@ imphm3_1KG_20_mA2[bestr]
 
 \subsection{A screen of cis relationships on chromosome 20}
 
+\subsubsection{Checking concordance between Mach and regression imputation for an apparently SNP-regulated gene}
+
 We have a high performance approach to surveying all genes vs all SNP on chromosome 20, with
 regression imputation.
 <<doi>>=
@@ -428,7 +430,10 @@ We will now obtain the best 10 SNP for each gene:
 if (!exists("s20tops"))
 s20topsL = lapply(g20, function(x) topFeats(probeid=x, mgr=ieq20, ffind=1, anno="illuminaHumanv1.db", useSym=FALSE))
 names(s20topsL) = g20
-s20tops = sapply(s20topsL, "[", 1)
+cls20topsL = s20topsL
+names(cls20topsL) = NULL  # clear gene names
+s20tops = unlist(lapply(cls20topsL, function(x) { nn = names(x); 
+     tmp = as.numeric(x[1]); names(tmp) = nn[1]; tmp }))
 topsnp20 = names(s20tops)
 tope20df = data.frame(snpid=topsnp20, score=s20tops, gene=g20)
 @
@@ -446,20 +451,44 @@ Here's the first one
 try(load("runb1.rda"))
 if(!exists("runb1")) {
 unix.time(runb1 <- unlist(mclapply(1:nrow(C20MLDOSE), function(x) {
-   if (x%%1000 == 0) cat(x);pv(ex3[bestg,]~C20MLDOSE[x,intersect(colnames(C20MLDOSE), colnames(ex3))])})))
+   if (x%%1000 == 0) cat(x);pv(ex3[bestg,]~C20MLDOSE[x,intersect(colnames(C20MLDOSE), colnames(ex3))][colnames(ex3)])})))
 names(runb1) = rownames(C20MLDOSE)
 save(runb1, file="runb1.rda")
 }
 @
 The top 10 SNP for predicting \Sexpr{theg} using MACH imputation are
 <<lkmomo>>=
-sort(runb1)[1:10]
+topm = sort(runb1)[1:10]
+topm
 @
 those based on regression imputation are
 <<lkmmaa>>=
-sort(s20topsL[[bestg]],decreasing=TRUE)[1:10]
+topr = sort(s20topsL[[bestg]],decreasing=TRUE)[1:10]
+topr
 @
-We need location data to get a sense of context.
+
+The mach-based result is probably not very interesting.
+<<acre,fig=TRUE>>=
+plot(ex3[bestg,]~C20MLDOSE[names(topm)[1],intersect(colnames(C20MLDOSE), colnames(ex3))])
+@
+
+To get a similar plot with the on-demand regression imputation, we have to create
+the imputed data and extract:
+<<doon,fig=TRUE>>=
+sss = smList(h20)[[1]]
+ni = as(sss, "numeric")
+ni[1:5,1:5]
+plot( ex3[bestg,]~ni[colnames(ex3),names(topr)[1]])
+@
+We see that both of these apparently strong results are based on a single heterozygous
+individual (in the case of mach, one with 1.7 B alleles, say.)
+
+Clearly the use of extreme statistics has to be accompanied by additional assessment.
+
+\subsubsection{Mach-based tests for other genes}
+
+
+
 
 \bibliography{jsm2010}
 
