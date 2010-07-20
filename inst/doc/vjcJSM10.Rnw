@@ -290,7 +290,7 @@ C20IMP_MACH = C20MLDOSE[ setdiff(rownames(C20MLDOSE), colnames(hm3_20gt)), ]
 @
 The SNP imputed by snpMatrix regression are
 <<lkreg>>=
-C20IMP_REG = t(impute.snps(imphm3_1KG_20_mA2, hm3_20gt))
+C20IMP_REG_SAVE = C20IMP_REG = t(impute.snps(imphm3_1KG_20_mA2, hm3_20gt))
 @
 The intersection of imputed loci and samples is
 <<impl>>=
@@ -347,13 +347,16 @@ an eQTL inference to improvement by imputation.
 We have expression data from hapmap 3 cell lines.
 In the following we will check a single gene for any eQTL by
 testing for every SNP, measured or imputed, on chr20, using lm (so a slow solution).
+We do not require conformity of the SNP sets -- the best fit for one imputation method might
+involve a SNP unavailable in the other.  Samples are restricted primarily by availability
+of expression data.
 <<gethm3>>=
 library(ceuhm3)
 data(hm3ceuSMS)
 ex3 = exprs(hm3ceuSMS)[, intersect(colnames(C20IMP_MACH), 
         sampleNames(hm3ceuSMS))]
-mach20 = C20IMP_MACH[, colnames(ex3)]
-reg20 = C20IMP_REG[, colnames(ex3)]
+mach20 = C20MLDOSE[, colnames(ex3)]
+reg20 = C20IMP_REG_SAVE[, colnames(ex3)]
 pv = function(...) { ttmp = try(lm(...)); 
            if(inherits(ttmp, "try-error")) return(NA); 
            tmp = summary(ttmp)$coef; if (nrow(tmp) !=2) return(NA); return(tmp[2,4]) }
@@ -383,16 +386,19 @@ values for the gene used against the two call sets.  We see that mach calls a si
 low expression, yielding a sharper slope of mean expression against allele count.
 <<doplaa,fig=TRUE>>=
 par(mfrow=c(2,2))
-best = names(s1)[1]
-plot( jj(mach20[ best, ]), jj(reg20[best, ]), xlab = "mach", ylab="regression", main=paste("(a)", best))
-plot (ex3[1,]~jj(mach20[best,]), xlab=best, ylab="expr", main="(b): mach")
-plot (ex3[1,]~jj(reg20[best,]), xlab=best, ylab="expr", main="(c): regr")
-plot (C20MLQC[best,colnames(mach20)]~jj(mach20[best,]), xlab=best, ylab="mach MLQC", main="(d): mach")
+besti = intersect(names(s1), names(s2))[1]
+bestm = names(s1)[1]
+bestr = names(s2)[1]
+plot( jj(mach20[ besti, ]), jj(reg20[besti, ]), xlab = "mach", ylab="regression", main=paste("(a)", besti))
+plot (ex3[1,]~jj(mach20[bestm,]), xlab=bestm, ylab="expr", main="(b): mach")
+plot (ex3[1,]~jj(reg20[bestr,]), xlab=bestr, ylab="expr", main="(c): regr")
+data(C20MLQC)
+plot (C20MLQC[bestm,colnames(mach20)]~jj(mach20[bestm,]), xlab=bestm, ylab="mach MLQC", main="(d): mach")
 @
 It is not clear how to form a preference for one approach to imputing genotypes at this locus.  Here
 is the model chosen by snpMatrix:
 <<lkrul>>=
-imphm3_1KG_20_mA2[best]
+imphm3_1KG_20_mA2[bestr]
 @
 
 \subsection{A screen of cis relationships on chromosome 20}
@@ -415,6 +421,7 @@ We will now obtain the best 10 SNP for each gene:
 <<gettop>>=
 if (!exists("s20tops"))
 s20topsL = lapply(g20, function(x) topFeats(probeid=x, mgr=ieq20, ffind=1, anno="illuminaHumanv1.db", useSym=FALSE))
+names(s20topsL) = g20
 s20tops = sapply(s20topsL, "[", 1)
 topsnp20 = names(s20tops)
 tope20df = data.frame(snpid=topsnp20, score=s20tops, gene=g20)
@@ -422,14 +429,20 @@ tope20df = data.frame(snpid=topsnp20, score=s20tops, gene=g20)
 and look at the genes that show strong association with some SNP.
 <<lkd>>=
 tops = tope20df[order(tope20df$score, decreasing=TRUE),][1:10,]
+tops
 bestg = as.character(tops[1, "gene"])
 get(bestg, illuminaHumanv1SYMBOL)
 @
 Does imputation with MACH lead to different identifications of eQTL for these genes?
 Here's the first one
 <<domac>>=
-unix.time(runb1 <- unlist(mclapply(1:nrow(mach20), function(x) {if (x%%1000 == 0) cat(x);pv(ex3[bestg,]~mach20[x,])})))
-names(runb1) = rownames(mach20)
+try(load("runb1.rda"))
+if(!exists("runb1")) {
+unix.time(runb1 <- unlist(mclapply(1:nrow(C20MLDOSE), function(x) {
+   if (x%%1000 == 0) cat(x);pv(ex3[bestg,]~C20MLDOSE[x,intersect(colnames(C20MLDOSE), colnames(ex3))])})))
+names(runb1) = rownames(C20MLDOSE)
+save(runb1, file="runb1.rda")
+}
 sort(runb1)[1:5]
 @
 
