@@ -456,7 +456,7 @@ The top 10 SNP for predicting \Sexpr{theg} using MACH imputation are
 sort(runb1)[1:10]
 @
 those based on regression imputation are
-<<lkmmaa>>-
+<<lkmmaa>>=
 sort(s20topsL[[bestg]],decreasing=TRUE)[1:10]
 @
 We need location data to get a sense of context.
