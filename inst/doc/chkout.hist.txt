@@ -1,0 +1,76 @@
+source("findbad.R", echo=TRUE)
+bestsn2 = sapply(g20, function(x) topFeats(probeid=x, mgr=e2, ffind=1, anno="illuminaHumanv1.db", n=1))
+mlp = function(x) -log10(1-pchisq(x,1)); which(mlp(bestsn) > mlp(bestsn2) & mlp(bestsn) > 8 )
+e1@fflist["rs6021989",] -> BADS
+e1@fflist[[1]]["rs6021989",] -> BADS
+which.max(BADS)
+e1@fflist[[1]]["rs6021989", 441]
+table(as( smList(lith)[[1]][, "rs6021989"], "character" ))
+e2@fflist[[1]]["rs6021989",] -> BADS2
+which.max(BADS2)
+e2@fflist[[1]]["rs6021989", 441]
+e2@fflist[[1]]["rs6021989", 448]
+ieqtlTests
+which.max(BADS)
+EX1 = exprs(lith)[ "GI_24430166-I", ]
+DF = data.frame(EX1, pData(lith)$male )
+DF = data.frame(EX1, male=pData(lith)$male )
+SDAT = smList(lith)[[1]]
+M1 = snp.rhs.tests( EX1~male, data=DF, snp.data=SDAT, family="gaussian" )
+M2 = snp.rhs.tests( EX1~male, data=DF, snp.data=SDAT, family="gaussian", rules=imp20 )
+length(imp20)
+length(M2@chisq)
+M2@chisq[1:5]
+getSlots(class(M2))
+all.equal(M2@test.names, names(imp20))
+all.equal(M1@test.names, colnames(SDAT))
+max(M2@chisq, na.rm=TRUE)
+max(M!@chisq, na.rm=TRUE)
+max(M1@chisq, na.rm=TRUE)
+which.max(M2@chisq)
+which.max(M1@chisq)
+M1@chisq[96207]
+M1@chisq[12807]
+M2@chisq[96207]
+ieqtlTests
+ 
+debug(ieqtlTests)
+debug(eqtlTests)
+e3 = eqtlTests( lith, ~male, targdir = "foo2", runname="foo2" )
+ngenes
+nchr
+chrNames
+dput(eqtlTests, file="eqtlT.R")
+source("eqtlT.R")
+debug(eqtlT)
+e3 = eqtlT( lith, ~male, targdir = "foo2T", runname="foo2T" )
+source("eqtlT.R")
+debug(eqtlT)
+e3 = eqtlT( lith, ~male, targdir = "foo2T", runname="foo2T" )
+debug(CF)
+debug(CF)
+e3 = eqtlT( lith, ~male, targdir = "foo2T", runname="foo2T" )
+debug(CF)
+debug(GF)
+ex
+length(ex)
+length(numans)
+dim(snpdata)
+summary(numans)
+class(numans)
+is.double(numans)
+summary(numans)
+summary(numans)
+range(rchisq(54000, 1))
+range(rchisq(540000, 1))
+range(rchisq(5400000, 1))
+args(eqtlTests)
+summary(numans)
+summary(numans)
+shortfac
+summary(shortfac*numans)
+dim(exprs(lith))
+634*nsnps
+range(rchisq(7.6e7, 1))
+Q
+savehistory(file="chkout.hist.txt")

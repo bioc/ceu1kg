@@ -1,0 +1,60 @@
+Sweave("vjcJSM2010.Rnw")
+Sweave("vjcJSM10.Rnw")
+imp20
+summary(imp20)
+save(imp20, file="imp20.rda")
+summary(imp20)[1:8,]
+sum(.Last.value)
+summary(imp20)[1:7,]
+sum(.Last.value)
+summary(imp20)
+imp20[1:10]
+table(Y[, "chr20:11541"]
+)
+table(as(Y[, "chr20:11541"], "character"))
+table(as(Y[, "chr20:13532"], "character"))
+table(as(Y[, "chr20:16618"], "character"))
+table(as(Y[, "chr20:18893"], "character"))
+?snp.imputation
+?imputation.r2
+imputation.r2(imp[1:10])
+imputation.r2(imp20[1:10])
+imputation.maf(imp20[1:10])
+hmceuB36
+library(illuminaHumanv1.db)
+g20 = get("20", revmap(illuminaHumanv1CHR))
+length(g20)
+g20[1:10]
+chunk(g20)
+?chunk
+?cut
+cc = cut(1:634, 5)
+table(cc)
+library(multicore)
+lith = hmceuB36[ probeId(g20), ]
+lith = lith[ chrnum("20"), ]
+lith
+dim(smList(lith)[[1]])
+e1 = eqtlTests( lith, ~male, geneApply=mclapply )
+library(GGtools)
+fix(eqtlTests)
+e1 = eqtlTests( lith, ~male, geneApply=mclapply )
+\e1
+e1
+topFeats(e1)
+args(topFeats)
+topFeats(probeId=g20[1], mgr=e1, ffind=1, anno="illuminaHumanv1.db" )
+topFeats(probeid=g20[1], mgr=e1, ffind=1, anno="illuminaHumanv1.db" )
+args(X2chunk)
+bestsn = sapply(g20, function(x) topFeats(probeid=x, mgr=e1, ffind=1, anno="illuminaHumanv1.db, n=1)
+)
+)
+bestsn = sapply(g20, function(x) topFeats(probeid=x, mgr=e1, ffind=1, anno="illuminaHumanv1.db", n=1)
+)
+bestsn[1:5]
+badn = names(bestsn)
+savehistory(file="dobest.hist.txt")
+gdn = gsub(".*\\.", "", badn) 
+gdn[1:6]
+names(bestsn) = gdn
+savehistory(file="dobest.hist.txt")

@@ -1,0 +1,8 @@
+Sweave("vjcJSM10.Rnw")
+sort(rung2)[1:5]
+sort(rung1)[1:5]
+rung2["chr20:24446267"]
+mach20["chr20:24446267",]
+reg20["chr20:24446267",]
+table(.Last.value, mach20["chr20:24446267",])
+savehistory(file="lkallsnp.hist.txt")

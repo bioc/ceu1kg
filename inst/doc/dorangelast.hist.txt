@@ -1,0 +1,185 @@
+source("findbad.R", echo=TRUE)
+bestsn2 = sapply(g20, function(x) topFeats(probeid=x, mgr=e2, ffind=1, anno="illuminaHumanv1.db", n=1))
+mlp = function(x) -log10(1-pchisq(x,1)); which(mlp(bestsn) > mlp(bestsn2) & mlp(bestsn) > 8 )
+e1@fflist["rs6021989",] -> BADS
+e1@fflist[[1]]["rs6021989",] -> BADS
+which.max(BADS)
+e1@fflist[[1]]["rs6021989", 441]
+table(as( smList(lith)[[1]][, "rs6021989"], "character" ))
+e2@fflist[[1]]["rs6021989",] -> BADS2
+which.max(BADS2)
+e2@fflist[[1]]["rs6021989", 441]
+e2@fflist[[1]]["rs6021989", 448]
+ieqtlTests
+which.max(BADS)
+EX1 = exprs(lith)[ "GI_24430166-I", ]
+DF = data.frame(EX1, pData(lith)$male )
+DF = data.frame(EX1, male=pData(lith)$male )
+SDAT = smList(lith)[[1]]
+M1 = snp.rhs.tests( EX1~male, data=DF, snp.data=SDAT, family="gaussian" )
+M2 = snp.rhs.tests( EX1~male, data=DF, snp.data=SDAT, family="gaussian", rules=imp20 )
+length(imp20)
+length(M2@chisq)
+M2@chisq[1:5]
+getSlots(class(M2))
+all.equal(M2@test.names, names(imp20))
+all.equal(M1@test.names, colnames(SDAT))
+max(M2@chisq, na.rm=TRUE)
+max(M!@chisq, na.rm=TRUE)
+max(M1@chisq, na.rm=TRUE)
+which.max(M2@chisq)
+which.max(M1@chisq)
+M1@chisq[96207]
+M1@chisq[12807]
+M2@chisq[96207]
+ieqtlTests
+ 
+debug(ieqtlTests)
+debug(eqtlTests)
+e3 = eqtlTests( lith, ~male, targdir = "foo2", runname="foo2" )
+ngenes
+nchr
+chrNames
+dput(eqtlTests, file="eqtlT.R")
+source("eqtlT.R")
+debug(eqtlT)
+e3 = eqtlT( lith, ~male, targdir = "foo2T", runname="foo2T" )
+source("eqtlT.R")
+debug(eqtlT)
+e3 = eqtlT( lith, ~male, targdir = "foo2T", runname="foo2T" )
+debug(CF)
+debug(CF)
+e3 = eqtlT( lith, ~male, targdir = "foo2T", runname="foo2T" )
+debug(CF)
+debug(GF)
+ex
+length(ex)
+length(numans)
+dim(snpdata)
+summary(numans)
+class(numans)
+is.double(numans)
+summary(numans)
+summary(numans)
+range(rchisq(54000, 1))
+range(rchisq(540000, 1))
+range(rchisq(5400000, 1))
+args(eqtlTests)
+summary(numans)
+summary(numans)
+shortfac
+summary(shortfac*numans)
+dim(exprs(lith))
+634*nsnps
+range(rchisq(7.6e7, 1))
+Q
+savehistory(file="chkout.hist.txt")
+source("findbad.R", echo=TRUE)
+where
+Q
+undebug(eqtlTests)
+set.seed(1234)
+e1 = eqtlTests( lith, ~male, geneApply=mclapply )
+save(e1, file="e1.rda")
+bestsn = sapply(g20, function(x) topFeats(probeid=x, mgr=e1, ffind=1, anno="illuminaHumanv1.db", n=1))
+badn = names(bestsn)
+gdn = gsub(".*\\.", "", badn)
+names(bestsn) = gdn
+lo = hm20locs[names(bestsn)]
+set.seed(1234)
+e2 = ieqtlTests( lith, ~male, geneApply=mclapply, targdir="ifoo",
+    runname="ifoo", rules=imp20 )
+save(e2, file="e2.rda")
+bestsn2 = sapply(g20, function(x) topFeats(probeid=x, mgr=e2, ffind=1, anno="illuminaHumanv1.db", n=1))
+mlp = function(x) -log10(1-pchisq(x,1))
+which( mlp(bestsn) > mlp(bestsn2) & mlp(bestsn) > 8 )
+summary(bestsn)
+summary(bestsn2)
+plot(mlp(bestsn), mlp(bestsn2))
+which( mlp(bestsn) > mlp(bestsn2) & mlp(bestsn) > 7 )
+bestsn[.Last.value]
+Q
+topFeats
+which.max(bestsn2)
+bestsn2[342]
+plot_EvG(probeId("GI_18426907-I"), rsid("rs2425278"), lith)
+sort(bestsn2, decreasing=TRUE)[1:10]
+plot_EvG(probeId("GI_31657130-S"), rsid("chr20:26064057"), lith)
+args(impute.snps)
+IS = impute.snps(imp20, smList(lith)[[1]])
+dim(IS)
+class(IS)
+EX = exprs(lith)["GI_31657130-S",]
+plot(EX~IS[, "chr20:26064057"])
+imp20[["chr20:26064057"]]
+imp20["chr20:26064057"]
+range(IS)
+range(IS, na.rm=TRUE))
+range(IS, na.rm=TRUE)
+?topFeats
+sn1 = rownames(e1@fflist[[1]])
+length(sn1)
+args(topFeats)
+bestG = mclapply(sn1, function(x) topFeats(rsid=x, e1, 1, "illuminaHumanv1.db", n=1,
+ useSym=FALSE)
+)
+length(bestG)
+bestG[1:10]
+fix(topFeats)
+bestG = mclapply(sn1, function(x) topFeats(rsid=x, mgr=e1, ffind=1, "ilanno=luminaHumanv1.db", n=1,
+)
+)
+bestG[1:10]
+bestG = mclapply(sn1, function(x) topFeats(rsid=x, mgr=e1, ffind=1, anno=luminaHumanv1.db", n=1,
+ useSym=FALSE)
+)
+bestG = mclapply(sn1, function(x) topFeats(rsid=x, mgr=e1, ffind=1, anno="luminaHumanv1.db", n=1,
+ useSym=FALSE))
+bestG = mclapply(sn1[1:100], function(x) topFeats(rsid=x, mgr=e1, ffind=1, anno="luminaHumanv1.db", n=1,
+ useSym=FALSE))
+unlist(bestG)
+table(table(names(.Last.value)))
+bestG = mclapply(sn1[1:1000], function(x) topFeats(rsid=x, mgr=e1, ffind=1, anno="luminaHumanv1.db", n=1,
+ useSym=FALSE))
+summary(bestg)
+summary(bestG)
+summary(unlist(bestG))
+sn2 = rownames(e2@fflist[[1]])
+length(sn2)
+bestG2 = mclapply(sn2[1:1000], function(x) topFeats(rsid=x, mgr=e2, ffind=1, anno="luminaHumanv1.db", n=1,
+ useSym=FALSE))
+summary(unlist(bestG2))
+bestG2 = mclapply(sn2[1:2000], function(x) topFeats(rsid=x, mgr=e2, ffind=1, anno="luminaHumanv1.db", n=1,
+ useSym=FALSE))
+summary(unlist(bestG2))
+length(bestG2)
+bestG2
+bestG2 = mclapply(sn2[1:20000], function(x) topFeats(rsid=x, mgr=e2, ffind=1, anno="luminaHumanv1.db", n=1,
+ useSym=FALSE))
+summary(bestG2)
+summary(unlist(bestG2))
+bestG2 = mclapply(sn2, function(x) topFeats(rsid=x, mgr=e2, ffind=1, anno="luminaHumanv1.db", n=1,
+ useSym=FALSE))
+summary(unlist(bestG2))
+bestG1 = mclapply(sn, function(x) topFeats(rsid=x, mgr=e1, ffind=1, anno="luminaHumanv1.db", n=1,
+ useSym=FALSE))
+bestG1 = mclapply(sn1, function(x) topFeats(rsid=x, mgr=e1, ffind=1, anno="luminaHumanv1.db", n=1,
+ useSym=FALSE))
+BG1 = unlist(bestG1)
+length(BG1)
+objects()
+length(hm20locs)
+library(GenomicRanges)
+BG1[1:5]
+bg1 = GRanges(IRanges(hm20locs,width=1), gene=names(BG1))
+hm20locsC = hm20locs
+hm20locsC[is.na(hm20locsC)] = 1
+bg1 = GRanges(IRanges(hm20locsC,width=1), gene=names(BG1))
+hm20locsC[1:10]
+bg1 = GRanges(IRanges(hm20locsC,width=1), seqnames="chr20", gene=names(BG1))
+bg1[1:5]
+names(bg1) = sn1
+bg1[1:5]
+bg1 = GRanges(IRanges(hm20locsC,width=1), seqnames="chr20", gene=names(BG1), chisq1=as.numeric(BG1))
+bg1
+savehistory(file="dorangelast.hist.txt")
