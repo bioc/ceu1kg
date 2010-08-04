@@ -1,0 +1,140 @@
+{\huge
+
+Rules that use SNPs defining $X$ (always observed) to predict $Y_t$
+(target, sometimes unobserved) are constructed in \textit{snpMatrix}
+(Clayton, Leung Hum Hered 2007) as follows.
+\begin{itemize}
+\item A tuning parameter \texttt{try} is selected by the user to
+specify how many of the SNP in $X$ ``nearest'' to $Y_t$ (using
+chromosomal coordinate distance) will
+be considered as predictors; the default value is 50.
+\item Three regression tuning parameters are specified by the user:
+a minimum acceptable value of $R^2$ to be achieved in stepwise
+\textit{linear} regression for predicting $Y_t$ using the 
+\textit{try} nearest elements of $X$; a maximum number of ``tagging'' SNP
+to be used in the regression model; and a minimum change in $R^2$
+required to support addition of new SNP to the regression model.
+\item Two haplotype modeling tuning parameters are specified by the user:
+a minimum acceptable value of $R^2$ that must be achieved before
+resorting to haplotype modeling, and the proportion by which $(1-R^2)$ must
+fall relative to the value achieved using regression, in order to
+adopt the (slower) haplotype-based imputation rule for $Y_t$.
+\end{itemize}
+
+}
+
+\clearpage
+
+{\huge
+The details of the regression and haplotype modeling are found in
+Chapman JM et al, Hum Hered 2003.  
+
+Briefly, forward stepwise linear regression is used,
+governed by the tuning parameters noted above, to establish an initial
+predictive model.  If $R^2$ is sufficiently large, the model is adopted.
+Otherwise probabilities of phased haplotypes for the set of predicting and target SNP
+are computed on the basis of an EM algorithm
+and a predictive rule is derived from these.
+}
+
+\clearpage
+
+
+{\huge How do you do it?}
+
+\begin{Schunk}
+\begin{Sinput}
+# snp.matrix entities:
+# hm3_20gt is HapMap phase III observed genotypes for chr20
+# c1kg_20 is 1000 genomes observed genotypes for chr20
+> X = c1kg_20[, intersect(colnames(hm3_20gt), colnames(c1kg_20))]
+> Y = c1kg_20[, setdiff(colnames(c1kg_20), colnames(X))]
+\end{Sinput}
+\end{Schunk}
+Now impute; tuning parameter minA tells minimum cell count needed
+to allow LD estimation):
+\begin{Schunk}
+\begin{Sinput}
+> unix.time(imphm3_1KG_20_mA2 <- snp.imputation(X, Y, 
++            hm3_20locs[colnames(X)], clocs[colnames(Y)], minA=2))
+\end{Sinput}
+\begin{Soutput}
+   user  system elapsed 
+  4.414   0.008   4.427 
+\end{Soutput}
+\end{Schunk}
+
+\clearpage
+
+{\huge What do you get?}
+
+\begin{Schunk}
+\begin{Sinput}
+> imphm3_1KG_20_mA2[1:5]
+\end{Sinput}
+\begin{Soutput}
+rs6078030  ~  rs6139074 (MAF = 0.2, R-squared = 1)
+rs34147676  ~  rs17685809*rs6052070*rs4814683*rs6139074 (MAF = 0.117, 
+                   R-squared = 0.987)
+chr20:11541 ~ No imputation available
+rs13043000  ~  rs17685809+rs6086539+rs6086616+rs6139074 (MAF = 0.142, 
+                   R-squared = 0.823)
+chr20:13532 ~ No imputation available
+\end{Soutput}
+\begin{Sinput}
+> length(imphm3_1KG_20_mA2)
+\end{Sinput}
+\begin{Soutput}
+[1] 141458
+\end{Soutput}
+\begin{Sinput}
+> object.size(imphm3_1KG_20_mA2)
+\end{Sinput}
+\begin{Soutput}
+107483832 bytes
+\end{Soutput}
+\end{Schunk}
+
+\clearpage
+
+\begin{Schunk}
+\begin{Sinput}
+> summary(imphm3_1KG_20_mA2)
+\end{Sinput}
+\begin{Soutput}
+             SNPs used
+R-squared     1 tags (reg) 2 tags (reg) 2 tags (hap) 3 tags (reg) 3 tags (hap)
+  (0,0.1]             3193         1228            0            0            0
+  (0.1,0.2]              0         3151           19         1179            0
+  (0.2,0.3]              0          888          193         1365          141
+  (0.3,0.4]              0          422          178          650          405
+  (0.4,0.5]              1          295          115          341          325
+  (0.5,0.6]              0          271          108          284          271
+  (0.6,0.7]              0          232          124          281          305
+  (0.7,0.8]              0          491          163          318          292
+  (0.8,0.9]              1          821          371          676          616
+  (0.9,0.95]             1          946          469          785          834
+  (0.95,0.99]         7179         2679          213         1946          741
+  (0.99,1]           44554         1108            0         1799          130
+  <NA>                   0            0            0            0            0
+             SNPs used
+R-squared     4 tags (reg) 4 tags (hap)  <NA>
+  (0,0.1]                0            0     0
+  (0.1,0.2]             57            0     0
+  (0.2,0.3]           1167           14     0
+  (0.3,0.4]           1387          412     0
+  (0.4,0.5]           1049          878     0
+  (0.5,0.6]            871         1216     0
+  (0.6,0.7]            868         1479     0
+  (0.7,0.8]           1202         2078     0
+  (0.8,0.9]           1867         3461     0
+  (0.9,0.95]          1559         3413     0
+  (0.95,0.99]         1387         4154     0
+  (0.99,1]             929         2109     0
+  <NA>                   0            1 26802
+\end{Soutput}
+\end{Schunk}
+The summary shows that about 26000 targets could not be imputed when minA is set to 2, but (summary not
+shown) there are over 47000 loci not
+imputed when minA takes default value 5.  Which choice is better?
+

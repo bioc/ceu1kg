@@ -168,6 +168,12 @@ RNA-seq/DNA-seq?
 
 \clearpage
 
+\begin{center}
+{\Huge \textbf{Topic 1: Project/data sketches}}
+\end{center}
+
+\clearpage
+
 {\sts{Sketch: 1000 genomes}
 
 \begin{center}
@@ -187,7 +193,7 @@ via browsers
 \item public release to aligned read level: many many BAM files
 \item more tractable: SNP and variant `calls': VCF files
 \item while focus is on DNA variation, availability of cell
-lines permits measurement of various microscopic phenotypes
+lines permits linkage of data to various microscopic phenotypes
 \item summary: 
 \bi
 \item archive of genetic sequence
@@ -335,6 +341,7 @@ population distributed through the project, or any call set in VCF format
 
 \clearpage
 
+\setkeys{Gin}{width=1.26\textwidth}
 \includegraphics{1KGVCFarch}
 
 \clearpage
@@ -344,7 +351,82 @@ population distributed through the project, or any call set in VCF format
 \includegraphics{structuralVar}
 
 
+\clearpage
 
+\begin{center}
+{\Huge \textbf{Topic 2: Imputation to the 1000 Genomes SNP panels}}
+\end{center}
 
+\clearpage
+
+{\sts{SNP imputation}
+\bi
+\item Typical genotyped resource for GWAS: 600K - 1 million SNP
+arrays
+\item 1000 genomes call sets on `samples' from base populations
+yields 7-8 million calls of SNP plus some additional details
+on haplotype structure or other forms of association among variants
+\item SNP imputation methods can extend limited array-based 
+panels to much denser sets
+\item Caveats include differential uncertainty between imputed
+and observed genotypes
+\ei
+}
+
+\clearpage
+
+{\huge
+Nature Biotechnology primer April 2009 (Halperin/Stephan)
+}
+
+\includegraphics{halperinTable}
+
+\clearpage
+
+{\huge
+Nothnagel et al Human Genetics 2009 imputed between different arrays
+}
+
+\setkeys{Gin}{width=1.06\textwidth}
+\includegraphics{nothTraj}
+
+\clearpage
+
+{\sts{Issues}
+\bi
+\item Nothnagel et al examined genotype calls; it is strongly
+preferred to estimate conditional mean allele count (and to
+accompany it with an estimate of variability)
+\item Computational effort units (GB RAM, hours) were described
+\bi
+\item Beagle (2, 349)
+\item IMPUTE (16, 455)
+\item MACH (8, 1574)
+\item PLINK (4, 138)
+\ei
+\item Handling of outputs not described
+\item How can imputation be done with R/Bioconductor?  Thanks to
+David Clayton ...
+\ei
+}
+
+\clearpage
+
+\input{impuin}
+
+\clearpage
+
+{\sts{Summary}
+\bi
+\item Need: \texttt{snp,matrix} representation of all calls for the base
+cohort, and locations for all SNP
+\item Partition the base call set into targets and predictors
+\item The partition could be generic: 1KG vs Affy 6.0 for example
+\item Generate formulas for computing conditional expected allele counts
+\item These are fast to generate and use, and can be reused whenever
+ a suitable cohort is genotyped on the target platform
+\item How good are they?  No formal optimality framework that I know of.
+\ei
+}
 
 \end{document}
