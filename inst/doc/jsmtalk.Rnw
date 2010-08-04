@@ -168,6 +168,20 @@ RNA-seq/DNA-seq?
 
 \clearpage
 
+{\sts{More upshots}
+\bi
+\item `eQTL' is a tricky term
+\item depends on representation of the expression of the gene
+or transcript of interest
+\item depends on details of the test (typically simple additive genetic effect)
+\item depends on the state of data on relevant variants, which is frequently changing
+\item a particular nuisance is the management of information on locations
+which are fundamental to `cis'/`trans' dichotomies
+\ei
+}
+
+\clearpage
+
 \begin{center}
 {\Huge \textbf{Topic 1: Project/data sketches}}
 \end{center}
@@ -310,13 +324,15 @@ and 1000 genomes calls
 \begin{verbatim}
 > plot_EvG(probeId("GI_17149835-I"), rsid("rs6041750"), 
        ceu1kg[chrnum("chr20"),])
-Error in .local(x, rs, ...) : rs number not found in columns of smlSet
+Error in .local(x, rs, ...) : rs number not found in 
+         columns of smlSet
 \end{verbatim}
 \bi
 \item Account for revisions in dbSNP
 \ei
-<<doo,eval=FALSE>>=
-plot_EvG(probeId("GI_17149835-I"), rsid("rs8392"), ceu1kg[chrnum("chr20"),])
+<<doo,eval=FALSE,keep.source=TRUE>>=
+plot_EvG(probeId("GI_17149835-I"), rsid("rs8392"), 
+    ceu1kg[chrnum("chr20"),])
 @
 } %huge
 }
@@ -426,7 +442,67 @@ cohort, and locations for all SNP
 \item These are fast to generate and use, and can be reused whenever
  a suitable cohort is genotyped on the target platform
 \item How good are they?  No formal optimality framework that I know of.
+So `compare' to MACH (runs thanks to Blanca Himes, Channing Lab)
 \ei
 }
+
+\clearpage
+
+\setkeys{Gin}{width=0.72\textwidth}
+\includegraphics{comp-lkp}
+
+\clearpage
+
+{\huge
+\textbf{Correlation between conditional expected allele counts
+for regression and MACH-based imputation is often fairly high}
+
+\begin{Schunk}
+\begin{Sinput}
+> compcor = sapply(regCompleteInds, function(i) cor(C20IMP_MACH[i,
++     ], C20IMP_REG[i, ]))
+> names(compcor) = rownames(C20IMP_REG)[regCompleteInds]
+\end{Sinput}
+\end{Schunk}
+We look at absolute value of correlation because we have no guarantees
+that alleles are identically labeled for the two approaches.
+\begin{Schunk}
+\begin{Sinput}
+> summary(abs(compcor)) # 77338 comparable loci
+\end{Sinput}
+\begin{Soutput}
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's
+  0.000   0.598   0.974   0.777   1.000   1.000   1.000
+\end{Soutput}
+\end{Schunk}
+}
+
+\clearpage
+
+{\sts{Is it good enough?}
+\bi
+\item One study to help compare the procedures: comprehensive
+cis/trans eQTL searches to the 1000 genomes panel with two
+or more imputation schemes in use
+\item recovery of known eQTL and improved resolution of
+functional variant would be measures of sensitivity for
+comparison
+\item degree of localization of association and
+tendency to avoid claims of trans eQTL discoveries would
+be a measure of specificity
+\item these metrics do not have simple implementation
+\item unfortunately, simply implemented metrics like
+distribution of $\chi^2$ values will not be very useful
+\ei
+}
+
+\clearpage
+
+{\sts{Example: left, eQTL tests for JAG1 using MACH imputed to 1KG;
+right, tests after a single permutation of expression values}
+
+\includegraphics{JAG1}
+}
+
 
 \end{document}
