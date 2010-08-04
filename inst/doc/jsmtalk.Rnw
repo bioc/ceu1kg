@@ -291,5 +291,30 @@ summary(smList(ceu1kg)[[20]])
 %decompressing on the fly
 %\ei
 
+\clearpage
+
+{\sts{Exercise}
+\bi
+\item The FKBP1A eQTL finding highlighted before was derived
+from HapMap phase II calls
+\item Reproduce the finding based on GENEVAR expression data
+and 1000 genomes calls
+\ei
+\begin{verbatim}
+> plot_EvG(probeId("GI_17149835-I"), rsid("rs6041750"), ceu1kg[chrnum("chr20"),])
+Error in .local(x, rs, ...) : rs number not found in columns of smlSet
+\end{verbatim}
+\bi
+\item Account for revisions in dbSNP
+\ei
+<<doo,eval=FALSE>>=
+plot_EvG(probeId("GI_17149835-I"), rsid("rs8392"), ceu1kg[chrnum("chr20"),])
+@
+}
+
+\clearpage
+
+\includegraphics{redoEVG}
+
 
 \end{document}
