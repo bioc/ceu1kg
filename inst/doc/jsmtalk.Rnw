@@ -116,13 +116,54 @@ Vince Carey \\ Channing Lab \\ Harvard Medical School
 
 \textbf{Dixon 2007 Nat Genet `global map'}
 
+\begin{center}
+\setkeys{Gin}{width=0.85\textwidth}
 \includegraphics{dixonSurvey}
+\end{center}
 
 \clearpage
 
 \textbf{Why do this?  1: Mechanisms of transcriptional control}
 
+\begin{center}
+\setkeys{Gin}{width=0.85\textwidth}
 \includegraphics{williamsSchem}
+\end{center}
+
+(RBH Williams et al 2007 Genome Resch)
+
+\clearpage
+
+{\stsL{Why do this?  2: Filtering SNP for efficient GWAS}
+
+\bi
+\item SNPs binned left to right in decreasing order of expression regulatory capacity
+\item $y$ axis: proportion SNP in bin associated with macro phenotype in WTCCC
+\ei
+
+\setkeys{Gin}{width=0.95\textwidth}
+\includegraphics{nicolaeEnrich}
+
+(D Nicolae et al 2010 PLoS Genetics)
+}
+
+\clearpage
+
+{\sts{Upshots}
+\bi
+\item eQTL catalogs seem useful; can efficiencies for
+individual studies be gained by imputing
+denser SNP panels using results of institutional deep sequencing?
+\item How can higher-resolution measures of mRNA abundance
+add to value from eQTL concepts: eQTL searches based on
+RNA-seq/DNA-seq?
+\item Under the hood, things may not be so nice...
+\ei
+}
+
+\clearpage
+
+\includegraphics{withCircs}
 
 \clearpage
 
