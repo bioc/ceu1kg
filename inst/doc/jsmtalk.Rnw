@@ -300,8 +300,10 @@ from HapMap phase II calls
 \item Reproduce the finding based on GENEVAR expression data
 and 1000 genomes calls
 \ei
+{\huge
 \begin{verbatim}
-> plot_EvG(probeId("GI_17149835-I"), rsid("rs6041750"), ceu1kg[chrnum("chr20"),])
+> plot_EvG(probeId("GI_17149835-I"), rsid("rs6041750"), 
+       ceu1kg[chrnum("chr20"),])
 Error in .local(x, rs, ...) : rs number not found in columns of smlSet
 \end{verbatim}
 \bi
@@ -310,11 +312,39 @@ Error in .local(x, rs, ...) : rs number not found in columns of smlSet
 <<doo,eval=FALSE>>=
 plot_EvG(probeId("GI_17149835-I"), rsid("rs8392"), ceu1kg[chrnum("chr20"),])
 @
+} %huge
 }
 
 \clearpage
 
 \includegraphics{redoEVG}
+
+\clearpage
+
+{\sts{Summary}
+\bi
+\item We have 7.7 million SNP calls on each of 60 individuals
+\item For 41 individuals with widely disseminated expression data,
+this has been linked to genotype
+\item Modulo a change to allele coding we reproduced a phase II
+HapMap eQTL finding using the 1000 genomes calls
+\item We have tools to import the 1000 genomes call sets for any
+population distributed through the project, or any call set in VCF format
+\ei
+}
+
+\clearpage
+
+\includegraphics{1KGVCFarch}
+
+\clearpage
+
+{\Huge NB: still need data/analysis models for variants beyond SNP}
+
+\includegraphics{structuralVar}
+
+
+
 
 
 \end{document}
