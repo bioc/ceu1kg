@@ -498,11 +498,74 @@ distribution of $\chi^2$ values will not be very useful
 
 \clearpage
 
-{\sts{Example: left, eQTL tests for JAG1 using MACH imputed to 1KG;
+{\stsh{Example: left, eQTL tests for JAG1 using MACH imputed to 1KG;
 right, tests after a single permutation of expression values}
 
+\setkeys{Gin}{width=1.02\textwidth}
 \includegraphics{JAG1}
+
+\bi
+\item even without permutation the apparent trans eQTL is dubious
+\item after permutation, we do not see loss of strong signals
+\item MACH makes bolder imputations to rare genotype configurations
+\ei
 }
+
+\clearpage
+
+{\sts{Summary on imputation}
+\bi
+\item fast, small, and retargetable imputation rules are computable
+using \textit{snpMatrix}
+\item results for conditional expected allele counts are often
+quite concordant with MACH
+\item can get us away from FILES encoding imputation process to
+self-describing OBJECTS
+\item more work to be done to elaborate costs and benefits of the
+empirical regression-based approach
+\ei
+}
+
+\clearpage
+
+
+\begin{center}
+{\Huge \textbf{Topic 3: Expression arrays, RNA-seq, and eQTL identification}}
+\end{center}
+
+\clearpage
+
+\setkeys{Gin}{width=0.76\textwidth}
+\includegraphics{withCircs}
+
+\clearpage
+
+{\sts{How could you check reproducibility of the strong effect with RNA-seq?}
+
+\setkeys{Gin}{width=0.96\textwidth}
+\includegraphics{mongTitle}
+}
+
+LOTS of FASTQ files at EBI ArrayExpress!
+
+\clearpage
+
+\setkeys{Gin}{width=1.06\textwidth}
+\includegraphics{montgDiscTable}
+
+\clearpage
+
+{\sts{Exercise}
+\bi
+\item Reproduce some of these findings
+\ei
+
+\bi
+\item Note: not a single gene or SNP is mentioned in the paper or supplementary information
+\item stay tuned: montRS package in development...
+\ei
+}
+
 
 
 \end{document}
