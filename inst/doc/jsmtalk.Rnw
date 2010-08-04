@@ -1,0 +1,133 @@
+
+
+%
+% NOTE -- ONLY EDIT THE .Rnw FILE!!!  The .tex file is
+% likely to be overwritten.
+%
+\documentclass[landscape]{article}
+
+\usepackage{amsmath,pstricks}
+\usepackage[authoryear,round]{natbib}
+\usepackage{hyperref}
+\usepackage{sectsty}
+\usepackage{landscape}
+\usepackage{graphics}
+
+\textwidth=10.9in
+\textheight=6.5in
+%\parskip=.3cm
+\oddsidemargin=.0in
+\evensidemargin=.0in
+\headheight=-.3in
+
+
+\newcommand{\scscst}{\scriptscriptstyle}
+\newcommand{\scst}{\scriptstyle}
+\newcommand{\dimfo}{\fontsize{14}{16}\selectfont}
+\newcommand{\expfo}{\fontsize{18}{22}\selectfont}
+
+
+\newcommand{\Rfunction}[1]{{\texttt{#1}}}
+\newcommand{\Robject}[1]{{\texttt{#1}}}
+\newcommand{\Rpackage}[1]{{\textit{#1}}}
+\newcommand{\Rmethod}[1]{{\texttt{#1}}}
+\newcommand{\Rfunarg}[1]{{\texttt{#1}}}
+\newcommand{\Rclass}[1]{{\textit{#1}}}
+
+\newcommand\bi{\begin{itemize}}
+\newcommand\ei{\end{itemize}}
+
+\textwidth=8.2in
+
+\bibliographystyle{plainnat} 
+
+\renewcommand{\familydefault}{\sfdefault}
+
+\usepackage[T1]{fontenc}
+
+\newcommand\cp{{\clearpage}}
+\newcommand\sts[1]{\Huge \textbf{#1}}
+\newcommand\stsh[1]{\huge \textbf{#1}}
+\newcommand\stsL[1]{\Large \textbf{#1}}
+\newcommand\stsl[1]{\large \textbf{#1}}
+
+\begin{document}
+
+\fontsize{18}{22}
+\selectfont
+\allsectionsfont{\sffamily}
+\sectionfont{\fontfamily{phv}\fontsize{18}{22}\selectfont}
+\subsectionfont{\fontfamily{phv}\fontsize{18}{22}\selectfont}
+\subsubsectionfont{\fontfamily{phv}\fontsize{18}{22}\selectfont}
+
+
+%\setkeys{Gin}{width=0.85\textwidth}
+
+{
+\Huge
+\begin{center}
+\textbf{Exploring 1000 Genomes with Bioconductor} \\
+\vspace*{1cm}
+Vince Carey \\ Channing Lab \\ Harvard Medical School
+\end{center}
+\vspace*{1.5cm}
+\begin{itemize}
+\item Prologue: What is an eQTL?
+\item Rationales: 1000 genomes; Bioconductor
+\item Imputation to the 1000 genomes SNP panel
+\item Expression arrays, RNA-seq, and eQTL identification
+\ei
+}
+
+\clearpage
+
+{\sts{Prologue: What is an eQTL (expression quantitative trait locus)?}
+\bi
+\item Arises from a basic form of integrative genome-scale data analysis
+\item On a cohort of $N$ individuals
+\bi
+\item SNP-chip yields allele counts for $S$ SNP, $S \approx 10^6$
+\item Expression array yields mRNA abundance measures for $G$ genes, $G \approx 20000$
+\ei
+\item perform $G \times S$ association tests of $H_{ogs}:$ mean expression of $g$ is independent of allele count for $s$
+\item the best hits are eQTL
+\ei
+}
+
+\clearpage
+
+\textbf{A chromosome-wide scan for a single gene}
+
+\begin{center}
+\setkeys{Gin}{width=0.75\textwidth}
+\includegraphics{showEQTL}
+\end{center}
+
+\clearpage
+
+\textbf{The `best SNP' discriminates mean expression}
+
+\begin{center}
+\setkeys{Gin}{width=0.75\textwidth}
+\includegraphics{goodEQTL}
+\end{center}
+
+\clearpage
+
+\textbf{Dixon 2007 Nat Genet `global map'}
+
+\includegraphics{dixonSurvey}
+
+\clearpage
+
+\textbf{Why do this?  1: Mechanisms of transcriptional control}
+
+\includegraphics{williamsSchem}
+
+\clearpage
+
+{\sts{Rationale: 1000 genomes}
+xyz
+}
+
+\end{document}
