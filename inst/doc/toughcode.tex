@@ -1,0 +1,127 @@
+\begin{Schunk}
+\begin{Sinput}
+> library(ceu1kg)
+> data(ceu1KG.sml)
+\end{Sinput}
+\end{Schunk}
+\begin{Schunk}
+\begin{Sinput}
+> sapply(ceu1KG.sml, dim)
+\end{Sinput}
+\begin{Soutput}
+       chr1   chr2   chr3   chr4   chr5   chr6   chr7   chr8   chr9  chr10
+[1,]     60     60     60     60     60     60     60     60     60     60
+[2,] 605756 664326 556362 567547 499164 518645 451004 429055 328069 396487
+      chr11  chr12  chr13  chr14  chr15  chr16  chr17  chr18  chr19  chr20
+[1,]     60     60     60     60     60     60     60     60     60     60
+[2,] 381826 365883 293253 254837 210540 238117 196327 225279 157182 174484
+      chr21  chr22
+[1,]     60     60
+[2,] 109143 101568
+\end{Soutput}
+\end{Schunk}
+{\huge
+\bi
+\item derived from the VCF representation of all calls for CEU
+\item distributed as a 700MB gzipped tabix-indexed file
+\item \texttt{GGtools:::vcf2sm} imports record-at-a-time
+decompressing on the fly
+\ei
+}
+
+\clearpage
+
+\begin{Schunk}
+\begin{Sinput}
+> ceu1KG.sml[[1]][1:2, 1:5]
+\end{Sinput}
+\begin{Soutput}
+A snp.matrix with  2 rows and  5 columns
+Row names:  NA06985 ... NA06986 
+Col names:  chr1:533 ... rs2462492 
+\end{Soutput}
+\begin{Sinput}
+> as(ceu1KG.sml[[1]][1:2, 1:5], "matrix")
+\end{Sinput}
+\begin{Soutput}
+        chr1:533 chr1:41342 chr1:41791 chr1:44449 rs2462492
+NA06985       01         01         01         01        01
+NA06986       01         02         01         01        01
+\end{Soutput}
+\begin{Sinput}
+> as(ceu1KG.sml[[1]][1:2, 1:5], "character")
+\end{Sinput}
+\begin{Soutput}
+        chr1:533 chr1:41342 chr1:41791 chr1:44449 rs2462492
+NA06985 "A/A"    "A/A"      "A/A"      "A/A"      "A/A"    
+NA06986 "A/A"    "A/B"      "A/A"      "A/A"      "A/A"    
+\end{Soutput}
+\end{Schunk}
+
+\clearpage
+
+\begin{Schunk}
+\begin{Sinput}
+> ceu1kg
+\end{Sinput}
+\begin{Soutput}
+snp.matrix-based genotype set:
+number of samples:  41 
+number of chromosomes present:  22 
+annotation: illuminaHumanv1.db 
+Expression data dims: 47293 x 41 
+Phenodata: An object of class "AnnotatedDataFrame"
+  sampleNames: NA06985, NA06994, ..., NA12874  (41 total)
+  varLabels and varMetadata description:
+    famid: hapmap family id
+    persid: hapmap person id
+    ...: ...
+    male: logical TRUE if male
+    (7 total)
+\end{Soutput}
+\begin{Sinput}
+> dim(exprs(ceu1kg))
+\end{Sinput}
+\begin{Soutput}
+[1] 47293    41
+\end{Soutput}
+\end{Schunk}
+
+\clearpage
+
+\begin{Schunk}
+\begin{Sinput}
+> summary(smList(ceu1kg)[[20]])
+\end{Sinput}
+{\Large
+\begin{Soutput}
+$rows
+   Call.rate Heterozygosity  
+ Min.   :1   Min.   :0.2114  
+ 1st Qu.:1   1st Qu.:0.2285  
+ Median :1   Median :0.2339  
+ Mean   :1   Mean   :0.2358  
+ 3rd Qu.:1   3rd Qu.:0.2430  
+ Max.   :1   Max.   :0.2555  
+
+$cols
+     Calls      Call.rate      MAF               P.AA             P.AB        
+ Min.   :41   Min.   :1   Min.   :0.00000   Min.   :0.0000   Min.   :0.00000  
+ 1st Qu.:41   1st Qu.:1   1st Qu.:0.03659   1st Qu.:0.3659   1st Qu.:0.07317  
+ Median :41   Median :1   Median :0.12195   Median :0.7317   Median :0.19512  
+ Mean   :41   Mean   :1   Mean   :0.16550   Mean   :0.6361   Mean   :0.23579  
+ 3rd Qu.:41   3rd Qu.:1   3rd Qu.:0.28049   3rd Qu.:0.9268   3rd Qu.:0.39024  
+ Max.   :41   Max.   :1   Max.   :0.50000   Max.   :1.0000   Max.   :0.92683  
+                                                                              
+      P.BB             z.HWE          
+ Min.   :0.00000   Min.   :  -6.4031  
+ 1st Qu.:0.00000   1st Qu.:  -0.1525  
+ Median :0.02439   Median :   0.1746  
+ Mean   :0.12815   Mean   :   0.0892  
+ 3rd Qu.:0.14634   3rd Qu.:   0.5578  
+ Max.   :1.00000   Max.   :   5.4731  
+                   NA's   :8173.0000  
+\end{Soutput}
+}
+\end{Schunk}
+

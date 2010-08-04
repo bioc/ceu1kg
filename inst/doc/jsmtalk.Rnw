@@ -263,26 +263,33 @@ Details:
 \end{verbatim}
 
 \clearpage
-<<lll,echo=FALSE,results=hide>>=
+<<lll,echo=FALSE,results=hide,eval=FALSE,results=hide,echo=FALSE>>=
 library(ceu1kg)
 if (!exists("ceu1KG.sml")) data(ceu1KG.sml)
 if (!exists("ceu1kg")) data(ceu1kg)
-<<lkd,eval=FALSE>>=
+<<lkd,eval=FALSE,echo=FALSE>>=
 library(ceu1kg)
 data(ceu1KG.sml)
-<<lkddd>>=
+<<lkddd,eval=FALSE,results=hide,echo=FALSE>>=
 sapply(ceu1KG.sml,dim)
 ceu1KG.sml[[1]][1:2,1:5]
 as(ceu1KG.sml[[1]][1:2,1:5], "matrix")
 as(ceu1KG.sml[[1]][1:2,1:5], "character")
 @
 
-\clearpage
-<<lkm>>=
+%\clearpage
+<<lkm,eval=FALSE,results=hide,echo=FALSE>>=
 ceu1kg
 dim(exprs(ceu1kg))
 summary(smList(ceu1kg)[[20]])
 @
+\input{toughcode}
+%\bi
+%\item derived from the VCF representation of all calls for CEU
+%\item distributed as a 700MB gzipped tabix-indexed file
+%\item \texttt{GGtools:::vcf2sm} imports record-at-a-time
+%decompressing on the fly
+%\ei
 
 
 \end{document}
