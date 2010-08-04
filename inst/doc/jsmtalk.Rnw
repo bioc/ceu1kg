@@ -73,7 +73,7 @@ Vince Carey \\ Channing Lab \\ Harvard Medical School
 \vspace*{1.5cm}
 \begin{itemize}
 \item Prologue: What is an eQTL?
-\item Rationales: 1000 genomes; Bioconductor
+\item Sketches: 1000 genomes; Bioconductor
 \item Imputation to the 1000 genomes SNP panel
 \item Expression arrays, RNA-seq, and eQTL identification
 \ei
@@ -163,12 +163,126 @@ RNA-seq/DNA-seq?
 
 \clearpage
 
+\setkeys{Gin}{width=0.76\textwidth}
 \includegraphics{withCircs}
 
 \clearpage
 
-{\sts{Rationale: 1000 genomes}
-xyz
+{\sts{Sketch: 1000 genomes}
+
+\begin{center}
+\setkeys{Gin}{width=0.96\textwidth}
+\includegraphics{flicekMap}
+\end{center}
+
 }
+
+\clearpage
+
+{\sts{Sketch: 1000 genomes}
+
+\bi
+\item DNA sequencing to various depths; high-level interfaces
+via browsers
+\item public release to aligned read level: many many BAM files
+\item more tractable: SNP and variant `calls': VCF files
+\item while focus is on DNA variation, availability of cell
+lines permits measurement of various microscopic phenotypes
+\item summary: 
+\bi
+\item archive of genetic sequence
+\item institutional data reductions
+\item resource for inference on genetic hypotheses and for methods development
+\ei
+\ei
+}
+
+\clearpage
+
+{\sts{Sketch: Bioconductor}
+
+\bi
+\item open-source repository for R-based software targeting genome-scale
+data analysis
+\item progress to date
+\bi
+\item preprocessing/annotation/analysis
+\item important methods support for affy and illumina expression and
+genotyping arrays
+\item interfaces to GEO/ArrayExpress/SRA for rapid import
+\item support for high-performance GWAS and eQTL searches
+\item exploit innovations in R: multicore, ``disk as RAM'', ``orchestrator''
+\item efforts in sequencing: QC, annotation, analysis (particularly RNA-seq)
+\item for 1000 genomes, we have ind1KG, ceu1KG
+\ei
+\ei
+}
+
+\clearpage
+
+\begin{verbatim}
+ceu1kg-package             package:ceu1kg              R Documentation
+
+CEU (N=60) genotypes from 1000 genomes pilot phase I
+
+Description:
+
+     CEU genotypes from 1000 genomes pilot phase I (approx 8 million
+     SNP); includes wellcome trust GENEVAR expression for 41
+     individuals
+
+Details:
+
+       Package:   ceu1kg                                                  
+       Version:   0.0.0                                                   
+       Depends:   R (>= 2.11.1), snpMatrix (>= 1.13.1), GGBase (>= 3.9.0) 
+       License:   Artistic-2.0                                            
+       LazyLoad:  yes                                                     
+       Built:     R 2.12.0; ; 2010-07-01 01:14:27 UTC; unix               
+      
+     Index:
+     
+     
+     ceu1kg-package          60 hapmap CEU samples, 47K expression, 8mm 1000
+                             genomes SNP 
+
+     There are three basic data resources provided here.
+
+     First, the 1000 genomes SNP calls for 60 CEU individuals were
+     extracted from the pilot 1 VCF files distributed at <URL:
+     ftp://ftp-trace.ncbi.nih.gov/1000genomes/ftp/pilot_data/release/2010_03/pilot1/>.
+
+     Second, metadata 'GRanges-class' instances are provided in
+     chromosome-specific containers.
+
+     Third, an 'smlSet' is provided for 41 individuals in the 1000
+     genomes CEU SNP call set for whom expression data are available
+     via the Sanger GENEVAR distribution (<URL:
+     ftp://ftp.sanger.ac.uk/pub/genevar/CEU_parents_norm_march2007.zip>).
+
+\end{verbatim}
+
+\clearpage
+<<lll,echo=FALSE,results=hide>>=
+library(ceu1kg)
+if (!exists("ceu1KG.sml")) data(ceu1KG.sml)
+if (!exists("ceu1kg")) data(ceu1kg)
+<<lkd,eval=FALSE>>=
+library(ceu1kg)
+data(ceu1KG.sml)
+<<lkddd>>=
+sapply(ceu1KG.sml,dim)
+ceu1KG.sml[[1]][1:2,1:5]
+as(ceu1KG.sml[[1]][1:2,1:5], "matrix")
+as(ceu1KG.sml[[1]][1:2,1:5], "character")
+@
+
+\clearpage
+<<lkm>>=
+ceu1kg
+dim(exprs(ceu1kg))
+summary(smList(ceu1kg)[[20]])
+@
+
 
 \end{document}
