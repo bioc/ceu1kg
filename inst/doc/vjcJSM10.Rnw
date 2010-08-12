@@ -258,12 +258,14 @@ X = c1kg_20[ , intersect(colnames(hm3_20gt), colnames(c1kg_20))]
 Y = c1kg_20[ , setdiff(colnames(c1kg_20), colnames(X))]
 @
 Now impute with two different choices of the \texttt{minA} parameter (which determines how much data are available for
-LD estimation):
+LD estimation).  Other parameter settings were supplied by Chris Wallace of Univ. Cambridge:
 <<lkdi>>=
 options(digits=3)
 args(snp.imputation)
-unix.time(imphm3_1KG_20_mA2 <- snp.imputation(X, Y, hm3_20locs[colnames(X)], clocs[colnames(Y)], minA=2))
-unix.time(imphm3_1KG_20_mA5 <- snp.imputation(X, Y, hm3_20locs[colnames(X)], clocs[colnames(Y)], minA=5))
+unix.time(imphm3_1KG_20_mA2 <- snp.imputation(X, Y, hm3_20locs[colnames(X)], clocs[colnames(Y)], minA=2,
+    try=200, em.cntrl=c(1000,0.005), use.hap=c(0.99,0.01)))
+unix.time(imphm3_1KG_20_mA5 <- snp.imputation(X, Y, hm3_20locs[colnames(X)], clocs[colnames(Y)], minA=5,
+    try=200, em.cntrl=c(1000,0.005), use.hap=c(0.99,0.01)))
 imphm3_1KG_20_mA2[1:5]
 imphm3_1KG_20_mA5[1:5]
 length(imphm3_1KG_20_mA2)
@@ -272,7 +274,7 @@ summary(imphm3_1KG_20_mA2)
 save(imphm3_1KG_20_mA2, file="imphm3_1KG_20_mA2.rda")
 save(imphm3_1KG_20_mA5, file="imphm3_1KG_20_mA5.rda")
 @
-The summary shows that about 26000 targets could not be imputed when minA is set to 2, but (summary not
+The summary shows that about 26000 XXX targets could not be imputed when minA is set to 2, but (summary not
 shown) there are over 47000 loci not
 imputed when minA takes default value 5.  Which choice is better?
 
@@ -408,11 +410,14 @@ imphm3_1KG_20_mA2[bestr]
 
 \subsection{A screen of cis relationships on chromosome 20}
 
+The following computations are too slow to run in the package.  They can be run separately by hand,
+and results from occasional runs in the inst/scripts folder can be checked.
+
 \subsubsection{Checking concordance between Mach and regression imputation for an apparently SNP-regulated gene}
 
 We have a high performance approach to surveying all genes vs all SNP on chromosome 20, with
 regression imputation.
-<<doi>>=
+<<doieval=FALSE>>=
 library(GGtools)
 h20 = hm3ceuSMS[ chrnum("chr20"), ]
 library(illuminaHumanv1.db)
@@ -426,7 +431,7 @@ if (!exists("ieq20")) {
 ieq20
 @
 We will now obtain the best 10 SNP for each gene:
-<<gettop>>=
+<<gettopeval=FALSE>>=
 if (!exists("s20tops"))
 s20topsL = lapply(g20, function(x) topFeats(probeid=x, mgr=ieq20, ffind=1, anno="illuminaHumanv1.db", useSym=FALSE))
 names(s20topsL) = g20
@@ -438,7 +443,7 @@ topsnp20 = names(s20tops)
 tope20df = data.frame(snpid=topsnp20, score=s20tops, gene=g20)
 @
 and look at the genes that show strong association with some SNP.
-<<lkd>>=
+<<lkdeval=FALSE>>=
 tops = tope20df[order(tope20df$score, decreasing=TRUE),][1:10,]
 tops
 bestg = as.character(tops[1, "gene"])
@@ -447,7 +452,7 @@ theg
 @
 Does imputation with MACH lead to different identifications of eQTL for these genes?
 Here's the first one
-<<domac>>=
+<<domaceval=FALSE>>=
 try(load("runb1.rda"))
 if(!exists("runb1")) {
 unix.time(runb1 <- unlist(mclapply(1:nrow(C20MLDOSE), function(x) {
@@ -457,24 +462,24 @@ save(runb1, file="runb1.rda")
 }
 @
 The top 10 SNP for predicting \Sexpr{theg} using MACH imputation are
-<<lkmomo>>=
+<<lkmomoeval=FALSE>>=
 topm = sort(runb1)[1:10]
 topm
 @
 those based on regression imputation are
-<<lkmmaa>>=
+<<lkmmaaeval=FALSE>>=
 topr = sort(s20topsL[[bestg]],decreasing=TRUE)[1:10]
 topr
 @
 
 The mach-based result is probably not very interesting.
-<<acre,fig=TRUE>>=
+<<acre,fig=TRUEeval=FALSE>>=
 plot(ex3[bestg,]~C20MLDOSE[names(topm)[1],intersect(colnames(C20MLDOSE), colnames(ex3))])
 @
 
 To get a similar plot with the on-demand regression imputation, we have to create
 the imputed data and extract:
-<<doon,fig=TRUE>>=
+<<doon,fig=TRUEeval=FALSE>>=
 sss = smList(h20)[[1]]
 ni = as(sss, "numeric")
 ni[1:5,1:5]
