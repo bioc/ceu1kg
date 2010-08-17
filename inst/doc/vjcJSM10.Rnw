@@ -263,9 +263,9 @@ LD estimation).  Other parameter settings were supplied by Chris Wallace of Univ
 options(digits=3)
 args(snp.imputation)
 unix.time(imphm3_1KG_20_mA2 <- snp.imputation(X, Y, hm3_20locs[colnames(X)], clocs[colnames(Y)], minA=2,
-    try=200, em.cntrl=c(1000,0.005), use.hap=c(0.99,0.01)))
+    try=200, em.cntrl=c(1000,0.005), use.hap=c(1.00,0.01)))
 unix.time(imphm3_1KG_20_mA5 <- snp.imputation(X, Y, hm3_20locs[colnames(X)], clocs[colnames(Y)], minA=5,
-    try=200, em.cntrl=c(1000,0.005), use.hap=c(0.99,0.01)))
+    try=200, em.cntrl=c(1000,0.005), use.hap=c(1.00,0.01)))
 imphm3_1KG_20_mA2[1:5]
 imphm3_1KG_20_mA5[1:5]
 length(imphm3_1KG_20_mA2)
@@ -473,7 +473,7 @@ topr
 @
 
 The mach-based result is probably not very interesting.
-<<acre,fig=TRUEeval=FALSE>>=
+<<acre,fig=TRUE,eval=FALSE>>=
 plot(ex3[bestg,]~C20MLDOSE[names(topm)[1],intersect(colnames(C20MLDOSE), colnames(ex3))])
 @
 
