@@ -29,12 +29,12 @@ There are three basic data resources provided here.
 
 First, the 1000 genomes
 SNP calls for 60 CEU individuals were extracted from the pilot 1 VCF files
-distributed at \url{ftp://ftp-trace.ncbi.nih.gov/1000genomes/ftp/pilot_data/release/2010_03/pilot1/}.  The data are recorded as \code{\link[snpMatrix]{snp.matrix}} instances, in a list \code{ceu1kg.sml}.
+distributed at \url{ftp://ftp-trace.ncbi.nih.gov/1000genomes/ftp/pilot_data/release/2010_03/pilot1/}.  The data are recorded as \code{\link[snpMatrix]{snp.matrix-class}} instances, in a list \code{ceu1kg.sml}.
 
 Second, metadata \code{\link[GenomicRanges]{GRanges-class}} instances are provided
 in chromosome-specific containers.
 
-Third, a \code{\link[GGtools]{smlSet}} is provided for 41 individuals in the
+Third, a \code{\link[GGtools]{smlSet-class}} is provided for 41 individuals in the
 1000 genomes CEU SNP call set for whom expression data are available via
 the Sanger GENEVAR distribution (\url{ftp://ftp.sanger.ac.uk/pub/genevar/CEU_parents_norm_march2007.zip}).
 }
@@ -56,9 +56,9 @@ Maintainer: VJ Carey <stvjc@channing.harvard.edu>
 \examples{
 # all genotypes
 library(ceu1kg)
-data(ceu1kg.sml)
-names(ceu1kg.sml)
-ceu1kg.sml[[1]]
+data(ceu1KG.sml)
+names(ceu1KG.sml)
+ceu1KG.sml[[1]]
 data(ceu1kgMeta_20)
 ceu1kgMeta_20
 data(ceu1kg)
