@@ -479,7 +479,7 @@ plot(ex3[bestg,]~C20MLDOSE[names(topm)[1],intersect(colnames(C20MLDOSE), colname
 
 To get a similar plot with the on-demand regression imputation, we have to create
 the imputed data and extract:
-<<doon,fig=TRUEeval=FALSE>>=
+<<doon,fig=TRUE,eval=FALSE>>=
 sss = smList(h20)[[1]]
 ni = as(sss, "numeric")
 ni[1:5,1:5]
