@@ -34,7 +34,7 @@ distributed at \url{ftp://ftp-trace.ncbi.nih.gov/1000genomes/ftp/pilot_data/rele
 Second, metadata \code{\link[GenomicRanges]{GRanges-class}} instances are provided
 in chromosome-specific containers.
 
-Third, a \code{\link[GGtools]{smlSet-class}} is provided for 41 individuals in the
+Third, a \code{\link[GGBase]{smlSet-class}} is provided for 41 individuals in the
 1000 genomes CEU SNP call set for whom expression data are available via
 the Sanger GENEVAR distribution (\url{ftp://ftp.sanger.ac.uk/pub/genevar/CEU_parents_norm_march2007.zip}).
 }
