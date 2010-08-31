@@ -2,3 +2,42 @@
 provenance info for ceu1kg
 
 expression data: ftp://ftp.sanger.ac.uk/pub/genevar/CEU_parents_norm_march2007.zip
+
+VCF 4.0 file:
+ftp://ftp-trace.ncbi.nih.gov/1000genomes/ftp/pilot_data/release/2010_07/low_coverage/snps/CEU.low_coverage.2010_07.genotypes.vcf.gz
+
+processing tasks: 
+  a) acquire genotypes as snp.matrix instances.
+GGtools::vcf2sm was adequate for most chromosomes,
+but there were problems for chromosomes 1-4 that are still not
+diagnosed.  After running csplit on a tabix-based chromosome-specific
+extract to get approximately 12 chunks, the vcf2smTXT function was 
+used with mclapply.
+
+example:
+
+tabix *vcf.gz 1 > vcf1.txt
+csplit vcf1.txt 50000 100000 150000 200000 250000 300000 350000 400000 450000 500000 550000
+
+this yields a bunch of files xx00 ... xx10 ...
+
+then
+
+library(GGtools)
+load("themeta.rda")  # extracted manually using GGtools:::getMetaVCF
+library(multicore)
+c1list = mclapply( dir(patt="^xx"), function(f) vcf2smTXT( f, meta=themeta,
+verbose=TRUE, gran=10000 ) )
+save(c1list, file="c1list.rda")
+
+the resulting list is unlisted using cbind2 in snpMatrix
+
+  b) location metadata construction:
+
+tabix was used manually to chop the vcf into chromosome-specific
+chunks, and then, e.g.,
+
+ceu1kgMeta_5 = vcfc2gr( "c5.vcf.gz", "zcat", 12, mclapply, "chr5" )
+save(ceu1kgMeta_5, file="ceu1kgMeta_5.rda")
+
+The parimport package defines vcfc2gr function
