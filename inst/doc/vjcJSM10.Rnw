@@ -4,10 +4,10 @@
 % likely to be overwritten.
 %
 
-%\VignetteIndexEntry{}
+%\VignetteIndexEntry{Exploring 1000 genomes project with Bioconductor}
 %\VignetteDepends{}
 %\VignetteKeywords{}
-%\VignettePackage{}
+%\VignettePackage{ceu1kg}
 
 \documentclass[12pt]{article}
 
@@ -130,17 +130,17 @@ package \textit{ceu1kg}.  The 1-byte representation of allele copy number (or co
 expectation thereof) defined in the \textit{snpMatrix} package is used \citep{clayton2007}.
 <<lkd,keep.source=TRUE>>=
 library(ceu1kg)  # load all genotype data
-if (!exists("ceu1KG.sml")) data(ceu1KG.sml)
-names(ceu1KG.sml)   # list of autosomes
-ceu1KG.sml[[1]]     # representation
-object.size(ceu1KG.sml[[1]])
-object.size(colnames(ceu1KG.sml[[1]]))  # bookkeeping cost
-as(ceu1KG.sml[[1]], "matrix")[1:3,1:4]
-sum(sapply(ceu1KG.sml, ncol))  # total SNP count
+if (!exists("ceu1kg.sml")) data(ceu1kg.sml)
+names(ceu1kg.sml)   # list of autosomes
+ceu1kg.sml[[1]]     # representation
+object.size(ceu1kg.sml[[1]])
+object.size(colnames(ceu1kg.sml[[1]]))  # bookkeeping cost
+as(ceu1kg.sml[[1]], "matrix")[1:3,1:4]
+sum(sapply(ceu1kg.sml, ncol))  # total SNP count
 @
 We'll be working with data on chromosome 20:
 <<get20>>=
-c1kg_20 = ceu1KG.sml[[20]]
+c1kg_20 = ceu1kg.sml[[20]]
 dim(c1kg_20)
 @
 
