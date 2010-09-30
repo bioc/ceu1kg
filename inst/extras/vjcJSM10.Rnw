@@ -113,12 +113,20 @@ model performance may also evolve, it is desirable to develop approaches
 to SNP imputation that are more suited to interactive exploration.
 
 The IDs of samples relevant for these tasks are:
-<<impm>>=
+<<impm,eval=FALSE,echo=FALSE>>=
 library(ceu1kg)
 data(C20MLDOSE)
 isamp = colnames(C20MLDOSE)
 length(isamp)
 @
+<<lknnnn>>=
+library(GGtools)
+data(m20)
+as(m20, "numeric")[1:10,1:8]
+isamp = rownames(m20)
+length(isamp)
+@
+
 
 \subsection{Deriving and using SNP imputation rules}
 
@@ -283,13 +291,13 @@ imputed when minA takes default value 5.  Which choice is better?
 Blanca Himes of Channing Laboratory generated 1KG imputed genotypes using MACH.
 The results for chromosome 20 on the hapmap3 calls for CEU are
 <<getbl>>=
-data(C20MLDOSE)
-C20MLDOSE[11:15,1:6]
+m20[11:15,1:6]
 @
 This combines the imputed and observed genotype calls.  The imputed ones are:
+(NOTE -- LEGACY FROM TEXT REQUIRES TRANSPOSE FOR FIRST ITERATION)
 <<lk>>=
-C20_MACH_FULL = C20MLDOSE
-C20IMP_MACH = C20MLDOSE[ setdiff(rownames(C20MLDOSE), colnames(hm3_20gt)), ]
+C20_MACH_FULL = m20
+C20IMP_MACH = t(m20[ setdiff(colnames(m20), colnames(hm3_20gt)), ])
 @
 The SNP imputed by snpMatrix regression are
 <<lkreg>>=
@@ -298,13 +306,14 @@ C20IMP_REG_SAVE = C20IMP_REG = t(impute.snps(imphm3_1KG_20_mA2, hm3_20gt))
 The intersection of imputed loci and samples is
 <<impl>>=
 imploc = intersect(rownames(C20IMP_MACH), rownames(C20IMP_REG))
-comm = intersect(colnames(C20MLDOSE), colnames(C20IMP_REG))
+comm = intersect(rownames(C20IMP_MACH), colnames(C20IMP_REG))
 @
 We now have conformant structures on imputed allele counts.  We examine
 correlations for SNP with complete imputations by both methods.
+LEGACY: use numeric
 <<lki>>=
-C20IMP_MACH = C20IMP_MACH[ imploc, comm ]
-C20IMP_REG = C20IMP_REG[ imploc, comm ]
+C20IMP_MACH = as(C20IMP_MACH[ imploc, comm ], "numeric")
+C20IMP_REG = as(C20IMP_REG[ imploc, comm ], "numeric")
 regRefuse = apply(C20IMP_REG, 1, function(x) all(is.na(x)))
 regCompleteInds = which(apply(C20IMP_REG, 1, function(x) !any(is.na(x))))
 compcor = sapply(regCompleteInds, function(i) cor(C20IMP_MACH[i,], C20IMP_REG[i,]))
