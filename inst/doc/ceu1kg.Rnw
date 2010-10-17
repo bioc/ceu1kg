@@ -72,8 +72,10 @@ at the Sanger GENEVAR project (\url{ftp://ftp.sanger.ac.uk/pub/genevar/}).
 The 1KG genotypes are available for 43 of these 90 and the associated
 genotype plus expression data for these 43 are stored in an `smlSet' container:
 <<lkg>>=
+if (.Platform$OS.type != "windows") {
 data(ceu1kg)
 ceu1kg
+}
 @
 
 \section{Session information}
