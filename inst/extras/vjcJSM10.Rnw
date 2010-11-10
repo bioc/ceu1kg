@@ -135,7 +135,7 @@ length(isamp)
 Full 1KG genotype information for 60 individuals from the CEU cohort of the
 CEPH cell line donors is available in the Bioconductor experimental data
 package \textit{ceu1kg}.  The 1-byte representation of allele copy number (or conditional
-expectation thereof) defined in the \textit{snpMatrix} package is used \citep{clayton2007}.
+expectation thereof) defined in the \textit{snpMatrix2} package is used \citep{clayton2007}.
 <<lkd,keep.source=TRUE>>=
 library(ceu1kg)  # load all genotype data
 if (!exists("ceu1kg.sml")) data(ceu1kg.sml)
@@ -161,7 +161,7 @@ SNP and were called in 1KG but were not identified as DNA polymorphisms
 or not genotyped in HapMap Phase III.  We will focus on chromosome 20 for
 illustration.
 
-The imputation procedure provided in the \textit{snpMatrix} package
+The imputation procedure provided in the \textit{snpMatrix2} package
 has a reasonably intuitive interface; statistical details will be
 briefly reviewed below.  Complete genotype data on $N$
 individuals is managed in an $N \times C$ matrix $Z$, where
@@ -299,7 +299,7 @@ This combines the imputed and observed genotype calls.  The imputed ones are:
 C20_MACH_FULL = m20
 C20IMP_MACH = t(m20[ setdiff(colnames(m20), colnames(hm3_20gt)), ])
 @
-The SNP imputed by snpMatrix regression are
+The SNP imputed by snpMatrix2 regression are
 <<lkreg>>=
 C20IMP_REG_SAVE = C20IMP_REG = t(impute.snps(imphm3_1KG_20_mA2, hm3_20gt))
 @
@@ -341,11 +341,11 @@ for (i in 10:18)
 
 There is some concordance and some discordance.
 It would be interesting to have a metric
-on imputation effectiveness.  MACH and snpMatrix developers
+on imputation effectiveness.  MACH and snpMatrix2 developers
 have looked at imputation on known loci that were
 artificially held back and did not discover major
 shortcomings of their methods.  No succinct measure of effectiveness
-seems forthcoming.  MACH has a "QC" measure, and snpMatrix
+seems forthcoming.  MACH has a "QC" measure, and snpMatrix2
 has the $R^2$ associated with each regression rule.
 
 %The effect of a one-allele transfer on 'best eQTL' for
@@ -412,7 +412,7 @@ data(C20MLQC)
 plot (C20MLQC[bestm,colnames(mach20)]~jj(mach20[bestm,]), xlab=bestm, ylab="mach MLQC", main="(d): mach")
 @
 It is not clear how to form a preference for one approach to imputing genotypes at this locus.  Here
-is the model chosen by snpMatrix:
+is the model chosen by snpMatrix2:
 <<lkrul>>=
 imphm3_1KG_20_mA2[bestr]
 @

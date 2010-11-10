@@ -255,7 +255,7 @@ Details:
 
        Package:   ceu1kg                                                  
        Version:   0.0.0                                                   
-       Depends:   R (>= 2.11.1), snpMatrix (>= 1.13.1), GGBase (>= 3.9.0) 
+       Depends:   R (>= 2.11.1), snpMatrix2 (>= 1.1.1), GGBase (>= 3.9.0) 
        License:   Artistic-2.0                                            
        LazyLoad:  yes                                                     
        Built:     R 2.12.0; ; 2010-07-01 01:14:27 UTC; unix               
@@ -516,7 +516,7 @@ right, tests after a single permutation of expression values}
 {\sts{Summary on imputation}
 \bi
 \item fast, small, and retargetable imputation rules are computable
-using \textit{snpMatrix}
+using \textit{snpMatrix2}
 \item results for conditional expected allele counts are often
 quite concordant with MACH
 \item can get us away from FILES encoding imputation process to
