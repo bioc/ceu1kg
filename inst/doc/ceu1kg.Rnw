@@ -5,7 +5,7 @@
 %
 
 %\VignetteIndexEntry{ceu1kg overview}
-%\VignetteDepends{GGtools, snpMatrix}
+%\VignetteDepends{GGtools, snpMatrix2}
 %\VignetteKeywords{genetics}
 %\VignettePackage{ceu1kg}
 
