@@ -271,9 +271,9 @@ LD estimation).  Other parameter settings were supplied by Chris Wallace of Univ
 options(digits=3)
 args(snp.imputation)
 unix.time(imphm3_1KG_20_mA2 <- snp.imputation(X, Y, hm3_20locs[colnames(X)], clocs[colnames(Y)], minA=2,
-    try=200, em.cntrl=c(1000,0.005), use.hap=c(1.00,0.01)))
+    try=200))#, em.cntrl=c(1000,0.005), use.hap=c(1.00,0.01)))
 unix.time(imphm3_1KG_20_mA5 <- snp.imputation(X, Y, hm3_20locs[colnames(X)], clocs[colnames(Y)], minA=5,
-    try=200, em.cntrl=c(1000,0.005), use.hap=c(1.00,0.01)))
+    try=200))#, em.cntrl=c(1000,0.005), use.hap=c(1.00,0.01)))
 imphm3_1KG_20_mA2[1:5]
 imphm3_1KG_20_mA5[1:5]
 length(imphm3_1KG_20_mA2)
@@ -297,27 +297,27 @@ This combines the imputed and observed genotype calls.  The imputed ones are:
 (NOTE -- LEGACY FROM TEXT REQUIRES TRANSPOSE FOR FIRST ITERATION)
 <<lk>>=
 C20_MACH_FULL = m20
-C20IMP_MACH = t(m20[ setdiff(colnames(m20), colnames(hm3_20gt)), ])
+C20IMP_MACH = m20[, setdiff(colnames(m20), colnames(hm3_20gt)) ]
 @
 The SNP imputed by snpMatrix2 regression are
 <<lkreg>>=
-C20IMP_REG_SAVE = C20IMP_REG = t(impute.snps(imphm3_1KG_20_mA2, hm3_20gt))
+C20IMP_REG_SAVE = C20IMP_REG = impute.snps(imphm3_1KG_20_mA2, hm3_20gt)  # you get a numeric matrix now
 @
 The intersection of imputed loci and samples is
 <<impl>>=
-imploc = intersect(rownames(C20IMP_MACH), rownames(C20IMP_REG))
-comm = intersect(rownames(C20IMP_MACH), colnames(C20IMP_REG))
+imploc = intersect(colnames(C20IMP_MACH), colnames(C20IMP_REG))
+comm = intersect(rownames(C20IMP_MACH), rownames(C20IMP_REG))
 @
 We now have conformant structures on imputed allele counts.  We examine
 correlations for SNP with complete imputations by both methods.
 LEGACY: use numeric
 <<lki>>=
-C20IMP_MACH = as(C20IMP_MACH[ imploc, comm ], "numeric")
-C20IMP_REG = as(C20IMP_REG[ imploc, comm ], "numeric")
-regRefuse = apply(C20IMP_REG, 1, function(x) all(is.na(x)))
-regCompleteInds = which(apply(C20IMP_REG, 1, function(x) !any(is.na(x))))
-compcor = sapply(regCompleteInds, function(i) cor(C20IMP_MACH[i,], C20IMP_REG[i,]))
-names(compcor) = rownames(C20IMP_REG)[regCompleteInds]
+C20IMP_MACH = C20IMP_MACH[ comm, imploc ]  # already numeric
+C20IMP_REG = C20IMP_REG[ comm, imploc ]
+regRefuse = apply(C20IMP_REG, 2, function(x) all(is.na(x)))
+regCompleteInds = which(apply(C20IMP_REG, 2, function(x) !any(is.na(x))))
+compcor = sapply(regCompleteInds, function(i) cor(C20IMP_MACH[,i], C20IMP_REG[,i]))
+names(compcor) = colnames(C20IMP_REG)[regCompleteInds]
 @
 We look at absolute value of correlation because we have no guarantees
 that alleles are identically labeled for the two approaches.
@@ -329,13 +329,13 @@ Here are 9 examples of the correspondence:
 par(mfrow=c(3,3))
 jj = function(x) jitter(x, a=.1)
 for (i in 1:9)
-  plot(jj(C20IMP_MACH[i,]), jj(C20IMP_REG[i,]), xlab="mach", ylab="regr",
+  plot(jj(C20IMP_MACH[,i]), jj(C20IMP_REG[,i]), xlab="mach", ylab="regr",
     main=rownames(C20IMP_MACH)[i], xlim=c(-.2,2.2), ylim=c(-.2,2.2))
 @
 <<lkp2, fig=TRUE>>=
 par(mfrow=c(3,3))
 for (i in 10:18)
-  plot(jj(C20IMP_MACH[i,]), jj(C20IMP_REG[i,]), xlab="mach", ylab="regr",
+  plot(jj(C20IMP_MACH[,i]), jj(C20IMP_REG[,i]), xlab="mach", ylab="regr",
     main=rownames(C20IMP_MACH)[i], xlim=c(-.2,2.2), ylim=c(-.2,2.2))
 @
 
@@ -442,7 +442,7 @@ ieq20
 We will now obtain the best 10 SNP for each gene:
 <<gettopeval=FALSE>>=
 if (!exists("s20tops"))
-s20topsL = lapply(g20, function(x) topFeats(probeid=x, mgr=ieq20, ffind=1, anno="illuminaHumanv1.db", useSym=FALSE))
+s20topsL = lapply(g20, function(x) topFeats(probeId(x), mgr=ieq20, ffind=1, anno="illuminaHumanv1.db", useSym=FALSE))
 names(s20topsL) = g20
 cls20topsL = s20topsL
 names(cls20topsL) = NULL  # clear gene names
