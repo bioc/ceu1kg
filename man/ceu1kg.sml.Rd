@@ -2,27 +2,27 @@
 \alias{ceu1kg.sml}
 \docType{data}
 \title{
-snp.matrix instances of 1000 genomes low coverage data for CEU
+SnpMatrix instances of 1000 genomes low coverage data for CEU
 }
 \description{
-snp.matrix instances of 1000 genomes low coverage data for CEU
+SnpMatrix instances of 1000 genomes low coverage data for CEU
 }
 \usage{data(ceu1kg.sml)}
 \format{
   The format is: \cr
 List of 22 \cr
- $ chr1 :Formal class 'snp.matrix' [package "snpMatrix"] with 1 slots \cr
+ $ chr1 :Formal class 'SnpMatrix' [package "snpMatrix2"] with 1 slots \cr
   .. ..@ .Data: raw [1:60, 1:605756] 01 01 01 01 ... \cr
   .. .. ..- attr(*, "dimnames")=List of 2 \cr
   .. .. .. ..$ : chr [1:60] "NA06985" "NA06986" "NA06994" "NA07000" ... \cr
   .. .. .. ..$ : chr [1:605756] "chr1:533" "chr1:41342" "chr1:41791" "chr1:44449" ... \cr
- $ chr2 :Formal class 'snp.matrix' [package "snpMatrix"] with 1 slots \cr
+ $ chr2 :Formal class 'SnpMatrix' [package "snpMatrix2"] with 1 slots \cr
   .. ..@ .Data: raw [1:60, 1:664326] 01 01 02 02 ... \cr
   .. .. ..- attr(*, "dimnames")=List of 2 \cr
   .. .. .. ..$ : chr [1:60] "NA06985" "NA06986" "NA06994" "NA07000" ... \cr
   .. .. .. ..$ : chr [1:664326] "chr2:361" "chr2:536" "chr2:572" "chr2:1320" ... \cr
 .... \cr
- $ chr22:Formal class 'snp.matrix' [package "snpMatrix"] with 1 slots \cr
+ $ chr22:Formal class 'SnpMatrix' [package "snpMatrix2"] with 1 slots \cr
   .. ..@ .Data: raw [1:60, 1:101568] 01 01 01 01 ... \cr
   .. .. ..- attr(*, "dimnames")=List of 2 \cr
   .. .. .. ..$ : chr [1:60] "NA06985" "NA06986" "NA06994" "NA07000" ... \cr

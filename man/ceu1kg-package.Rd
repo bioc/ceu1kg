@@ -14,7 +14,7 @@ for 41 individuals
 \tabular{ll}{
 Package: \tab ceu1kg\cr
 Version: \tab 0.0.10\cr
-Depends: \tab R (>= 2.11.1), snpMatrix (>= 1.13.3), GGBase (>= 3.9.0)\cr
+Depends: \tab R (>= 2.11.1), snpMatrix2 (>= 1.1.4), GGBase (>= 3.9.0)\cr
 License: \tab Artistic-2.0\cr
 LazyLoad: \tab yes\cr
 Built: \tab R 2.12.0; ; 2010-07-01 01:14:27 UTC; unix\cr
@@ -30,7 +30,7 @@ There are three basic data resources provided here.
 First, the 1000 genomes
 SNP calls for 60 CEU individuals were extracted from the pilot data VCF file
 \url{ftp://ftp-trace.ncbi.nih.gov/1000genomes/ftp/pilot_data/release/2010_07/low_coverage/snps/CEU.low_coverage.2010_07.genotypes.vcf.gz}.
-The data are recorded as \code{\link[snpMatrix]{snp.matrix-class}} instances, in a list \code{ceu1kg.sml}.
+The data are recorded as \code{\link[snpMatrix2]{SnpMatrix-class}} instances, in a list \code{ceu1kg.sml}.
 
 Second, metadata \code{\link[GenomicRanges]{GRanges-class}} instances are provided
 in chromosome-specific containers.
