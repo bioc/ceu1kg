@@ -5,7 +5,7 @@
 %
 
 %\VignetteIndexEntry{ceu1kg overview}
-%\VignetteDepends{GGtools, snpMatrix2}
+%\VignetteDepends{GGtools}
 %\VignetteKeywords{genetics}
 %\VignettePackage{ceu1kg}
 
@@ -50,8 +50,12 @@ individuals of central European ancestry in Bioconductor}
 Using results of next generation sequencing experiments,
 a consortium of geneticists produced calls for SNP at approximately 8 million loci of the genomes of individuals of central European ancestry.
 
+NOTE: All code in this vignette is unevaluated for Bioconductor release 2.7, because of
+last-minute changes to the snpMatrix package by H-T Leung.  You can build this vignette when
+using Bioconductor release 2.8, by changing all eval=FALSE to TRUE.
+
 Genotype calls are held in a list of snp.matrix instances:
-<<lkd>>=
+<<lkd,eval=FALSE>>=
 library(ceu1kg)
 if (!exists("ceu1kg.sml")) data(ceu1kg.sml)
 names(ceu1kg.sml)
@@ -61,7 +65,7 @@ ceu1kg.sml[[1]]
 \clearpage
 
 Metadata about the loci are provided in GRanges instances:
-<<lkm>>=
+<<lkm,eval=FALSE>>=
 if (!exists("ceu1kgMeta_20")) data(ceu1kgMeta_20)
 ceu1kgMeta_20[1:3]
 @
@@ -71,7 +75,7 @@ CEU individuals in 30 trios, coupled with expression data as distributed
 at the Sanger GENEVAR project (\url{ftp://ftp.sanger.ac.uk/pub/genevar/}).  
 The 1KG genotypes are available for 43 of these 90 and the associated
 genotype plus expression data for these 43 are stored in an `smlSet' container:
-<<lkg>>=
+<<lkg,eval=FALSE>>=
 if (.Platform$OS.type != "windows") {
 data(ceu1kg)
 ceu1kg
@@ -79,7 +83,7 @@ ceu1kg
 @
 
 \section{Session information}
-<<lks>>=
+<<lks,eval=FALSE>>=
 sessionInfo()
 @
 
