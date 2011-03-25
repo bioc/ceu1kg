@@ -50,40 +50,44 @@ individuals of central European ancestry in Bioconductor}
 Using results of next generation sequencing experiments,
 a consortium of geneticists produced calls for SNP at approximately 8 million loci of the genomes of individuals of central European ancestry.
 
-NOTE: All code in this vignette is unevaluated for Bioconductor release 2.7, because of
-last-minute changes to the snpMatrix package by H-T Leung.  You can build this vignette when
-using Bioconductor release 2.8, by changing all eval=FALSE to TRUE.
 
-Genotype calls are held in a list of snp.matrix instances:
-<<lkd,eval=FALSE>>=
+Full genotype calls are held in a folder of SnpMatrix instances:
+<<lkd>>=
 library(ceu1kg)
-if (!exists("ceu1kg.sml")) data(ceu1kg.sml)
-names(ceu1kg.sml)
-ceu1kg.sml[[1]]
+dir(system.file("parts", package="ceu1kg"))
+lk = load(dir(system.file("parts", package="ceu1kg"),full=TRUE)[1])
+c1gt = get(lk)
+c1gt
 @
 
-\clearpage
-
-Metadata about the loci are provided in GRanges instances:
-<<lkm,eval=FALSE>>=
-if (!exists("ceu1kgMeta_20")) data(ceu1kgMeta_20)
-ceu1kgMeta_20[1:3]
+Metadata about the loci are provided in GRanges instances available
+from SNPlocs packages.  Here we consider the 2010 November release.
+<<lkm>>=
+library(SNPlocs.Hsapiens.dbSNP.20101109)
+if (!exists("c1loc")) c1loc = getSNPlocs("ch1", as.GRanges=TRUE)
+c1loc
+rsn1 = paste("rs", elementMetadata(c1loc)$RefSNP_id, sep="")
+length(intersect(rsn1, colnames(c1gt)))
+ext1 = grep("chr", colnames(c1gt))
+ext1 = as.numeric(gsub("chr1:", "", colnames(c1gt)[ext1]))
+length(intersect(ext1, start(c1loc)))
 @
+The last computation shows that most of the 1KG locations are not
+in dbSNP.
 
 The Bioconductor \textit{GGdata} package includes HapMap phase II genotypes on 90
 CEU individuals in 30 trios, coupled with expression data as distributed
 at the Sanger GENEVAR project (\url{ftp://ftp.sanger.ac.uk/pub/genevar/}).  
 The 1KG genotypes are available for 43 of these 90 and the associated
-genotype plus expression data for these 43 are stored in an `smlSet' container:
-<<lkg,eval=FALSE>>=
-if (.Platform$OS.type != "windows") {
-data(ceu1kg)
-ceu1kg
-}
+genotype plus expression data for these 43 can be acquired using
+getSS, for any chromosome or set of chromosomes.
+<<lkg>>=
+c20 = getSS("ceu1kg", "chr20")
+c20
 @
 
 \section{Session information}
-<<lks,eval=FALSE>>=
+<<lks>>=
 sessionInfo()
 @
 
