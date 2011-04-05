@@ -1,6 +1,7 @@
 \name{ceu1kg-package}
 \alias{ceu1kg-package}
 \alias{ceu1kg}
+\alias{ex}
 \docType{package}
 \title{
 CEU (N=60) genotypes from 1000 genomes pilot phase I
@@ -25,16 +26,13 @@ Index:
 ceu1kg-package          60 hapmap CEU samples, 47K expression, 8mm 1000
                         genomes SNP 
 }
-There are three basic data resources provided here.  
+There are three two data resources provided here.  
 
 First, the 1000 genomes
 SNP calls for 60 CEU individuals were extracted from the pilot data VCF file
 \url{ftp://ftp-trace.ncbi.nih.gov/1000genomes/ftp/pilot_data/release/2010_07/low_coverage/snps/CEU.low_coverage.2010_07.genotypes.vcf.gz}.
 
-Second, metadata \code{\link[GenomicRanges]{GRanges-class}} instances are provided
-in chromosome-specific containers.
-
-Third, a \code{\link[GGBase]{smlSet-class}} is provided for 43 individuals in the
+Second, a \code{\link[GGBase]{smlSet-class}} is provided for 43 individuals in the
 1000 genomes CEU SNP call set for whom expression data are available via
 the Sanger GENEVAR distribution (\url{ftp://ftp.sanger.ac.uk/pub/genevar/CEU_parents_norm_march2007.zip}).
 }
@@ -54,16 +52,5 @@ Maintainer: VJ Carey <stvjc@channing.harvard.edu>
 %%~~ \code{\link[<pkg>:<pkg>-package]{<pkg>}} ~~
 %}
 \examples{
-# all genotypes
-if ("package:snpMatrix2" \%in\% search()) {
-# note this will not run in Bioconductor 2.7
 library(ceu1kg)
-data(ceu1kg.sml)
-names(ceu1kg.sml)
-ceu1kg.sml[[1]]
-data(ceu1kgMeta_20)
-ceu1kgMeta_20
-data(ceu1kg)
-ceu1kg
-}
 }
