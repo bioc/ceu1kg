@@ -81,9 +81,18 @@ at the Sanger GENEVAR project (\url{ftp://ftp.sanger.ac.uk/pub/genevar/}).
 The 1KG genotypes are available for 43 of these 90 and the associated
 genotype plus expression data for these 43 can be acquired using
 getSS, for any chromosome or set of chromosomes.
-<<lkg>>=
+<<lkg,eval=FALSE>>=
 c20 = getSS("ceu1kg", "chr20")
 c20
+@
+The above code throws warning because the genotype data are present for
+60 individuals, but only 43 have expression values.  To create the
+same structure without a warning:
+<<dodo>>=
+data(eset) # assume ceu1kg is first in line, yields ex in global
+c1m = c1gt[sampleNames(ex),]
+c1ss = make_smlSet( ex, list(chr1=c1m) )
+c1ss
 @
 
 \section{Session information}
