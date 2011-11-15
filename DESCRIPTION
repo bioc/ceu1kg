@@ -1,6 +1,6 @@
 Package: ceu1kg
 Title: CEU (N=60) genotypes from 1000 genomes pilot phase I
-Version: 0.0.26
+Version: 0.0.27
 Author: VJ Carey <stvjc@channing.harvard.edu>
 Description: CEU genotypes from 1000 genomes "low coverage" pilot phase I 
 	(approx 8 million SNP calls released July 2010); includes 
